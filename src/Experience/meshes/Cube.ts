@@ -1,4 +1,4 @@
-import { Vec3, Box, Camera, OGLRenderingContext, Program, Vec2 } from 'ogl'
+import { Vec3, Box, Camera, OGLRenderingContext, Program } from 'ogl'
 
 import RaycastableMesh from '../core/RaycastableMesh'
 
@@ -6,6 +6,7 @@ import vertex from '~/shaders/cube/vertex.glsl'
 import fragment from '~/shaders/cube/fragment.glsl'
 
 import { getWorldPositionFromViewportCoords } from '~/utils/maths'
+import { mouseOffsetHandler, MouseOffsetHandler } from '~/utils/handler'
 
 interface CubeParams {
   mouse: Vec3
@@ -20,6 +21,7 @@ export default class Cube extends RaycastableMesh {
   _mouse: Vec3
   _positionOnDown: Vec3
   _camera: Camera
+  _mouseHandler: MouseOffsetHandler
 
   isDown: Vec3
 
@@ -41,15 +43,13 @@ export default class Cube extends RaycastableMesh {
     this._positionOnDown = new Vec3()
     this._camera = camera
 
+    this._mouseHandler = mouseOffsetHandler(this._mouseHandlerCallback)
+
     this.isDown = new Vec3()
 
     this.onBeforeRender(this._updateHitUniform)
 
     this.geometry.computeBoundingBox()
-  }
-
-  _updateHitUniform = () => {
-    this.program.uniforms.uHit.value = this.isHit ? 1 : 0
   }
 
   get width() {
@@ -60,25 +60,29 @@ export default class Cube extends RaycastableMesh {
     return HEIGHT * 0.5 * this.scale.y
   }
 
+  _updateHitUniform = () => {
+    this.program.uniforms.uHit.value = this.isHit ? 1 : 0
+  }
+
+  _mouseHandlerCallback = (init) => {
+    getWorldPositionFromViewportCoords(this._camera, this._mouse, this.position)
+    this.position.sub(init)
+  }
+
   /**
    * @todo
    * - add spring on move
    */
   update(_: number) {
     if (this.isDown.z) {
-      getWorldPositionFromViewportCoords(
-        this._camera,
-        this._mouse,
-        this.position,
-      )
-      this.position.sub(this._positionOnDown)
+      this._mouseHandler.callback()
     } else {
       getWorldPositionFromViewportCoords(
         this._camera,
         this._mouse,
-        this._positionOnDown,
+        this._mouseHandler.init,
       )
-      this._positionOnDown.sub(this.position)
+      this._mouseHandler.init.sub(this.position)
     }
   }
 }
