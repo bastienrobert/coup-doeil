@@ -2377,6 +2377,7 @@ declare module 'ogl' {
         maxDistance,
       }?: Partial<OrbitOptions>,
     )
+    enabled: boolean
 
     update()
   }
