@@ -1234,8 +1234,8 @@ declare module 'ogl' {
     set y(v: number)
     set(x: any, y?: any): this
     copy(v: any): this
-    add(va: any, vb: any): this
-    sub(va: any, vb: any): this
+    add(va: any, vb?: any): this
+    sub(va: any, vb?: any): this
     multiply(v: any): this
     divide(v: any): this
     inverse(v?: this): this

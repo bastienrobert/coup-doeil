@@ -8,8 +8,9 @@ import {
   Vec2,
 } from 'ogl'
 import Stats from 'stats.js'
-import { normalizeMouse } from '~/utils/maths'
+import { getResolutionNormalizedCoords } from '~/utils/maths'
 
+import Planes from './groups/Planes'
 import Cube from './meshes/Cube'
 
 const stats = new Stats()
@@ -27,6 +28,7 @@ export default class Experience extends Transform {
   _mouse: Vec3
   _mouseNorm: Vec3
   _cube: Cube
+  _planes: Planes
 
   constructor(renderer: Renderer) {
     super()
@@ -35,7 +37,7 @@ export default class Experience extends Transform {
     this._gl = renderer.gl
     this._gl.clearColor(1, 1, 1, 1)
 
-    this._camera = new Camera(this._gl, { aspect: 35 })
+    this._camera = new Camera(this._gl, { aspect: 45 })
     this._camera.position.set(0, 0, 7)
     this._camera.lookAt([0, 0, 0])
 
@@ -52,6 +54,16 @@ export default class Experience extends Transform {
       camera: this._camera,
     })
     this.addChild(this._cube)
+
+    /**
+     * @todo
+     * - should be set on the viewport left/right with %
+     */
+    this._planes = new Planes(this._gl, {
+      camera: this._camera,
+      resolution: this._resolution,
+    })
+    this.addChild(this._planes)
 
     this._rafID = requestAnimationFrame(this._render)
   }
@@ -75,7 +87,11 @@ export default class Experience extends Transform {
   _onMouseMove = (e: MouseEvent) => {
     if (this._mouse.z === 0) return
     this._mouse.set(e.clientX, e.clientY, 1)
-    normalizeMouse(this._mouse, this._resolution, this._mouseNorm)
+    getResolutionNormalizedCoords(
+      this._mouse,
+      this._resolution,
+      this._mouseNorm,
+    )
   }
 
   _onMouseUp = () => {
@@ -96,6 +112,9 @@ export default class Experience extends Transform {
     this._camera.perspective({
       aspect: this._resolution.x / this._resolution.y,
     })
+    this._camera.updateMatrixWorld()
+
+    this._planes.resize()
   }
 
   _render = (t) => {
