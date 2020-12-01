@@ -1,7 +1,8 @@
-import { Camera, Renderer, OGLRenderingContext, Transform, Orbit } from 'ogl'
+import { Camera, Renderer, OGLRenderingContext, Transform, Orbit, Vec2 } from 'ogl'
 import Stats from 'stats.js'
 
 import Cube from './meshes/Cube'
+import Spot from './meshes/Spot'
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -14,7 +15,9 @@ export default class Experience extends Transform {
 
   _camera: Camera
   _controls: Orbit
+  _resolution: Vec2
   _cube: Cube
+  _spot: Spot
 
   constructor(renderer: Renderer) {
     super()
@@ -28,28 +31,66 @@ export default class Experience extends Transform {
     this._camera.lookAt([0, 0, 0])
 
     this._controls = new Orbit(this._camera)
+    this._resolution = new Vec2()
 
     this._cube = new Cube(this._gl)
     this.addChild(this._cube)
+    this._spot = new Spot(this._gl, {
+      resolution: this._resolution
+    })
+    this.addChild(this._spot)
+
+    this._listen()
 
     this._rafID = requestAnimationFrame(this._render)
+  }
+
+  _listen() {
+    document.addEventListener('keydown', this._onKeyDown)
+    document.addEventListener('keyup', this._onKeyUp)
+  }
+
+  _unlisten() {
+    document.removeEventListener('keydown', this._onKeyDown)
+    document.removeEventListener('keyup', this._onKeyUp)
   }
 
   dispose() {
     if (this._rafID) cancelAnimationFrame(this._rafID)
     // DISPOSABLE ELEMENTS HERE (eg. REMOVE LISTENERS)
+    this._unlisten()
+  }
+
+
+  _onKeyDown = (e: KeyboardEvent) => {
+    if (e.code == 'ArrowRight') {
+      this._spot.setSide('LEFT')
+    }
+    else if (e.code == 'ArrowLeft') {
+      this._spot.setSide('RIGHT')
+    }
+    else {
+      this._spot.setSide('BOTH')
+    }
+  }
+
+  _onKeyUp = (e: KeyboardEvent) => {
+    this._spot.setSide('BOTH')
   }
 
   resize = () => {
-    const { width, height } = this.renderer.gl.canvas
+    this._resolution.set(this.renderer.gl.canvas.width, this.renderer.gl.canvas.height)
     this._camera.perspective({
-      aspect: width / height,
+      aspect: this._resolution.x / this._resolution.y,
     })
   }
 
-  _render = () => {
+  _render = (t: number) => {
     stats.begin()
+    const time = t * .001
+
     this._controls.update()
+    this._spot.update(time)
 
     this.renderer.render({ scene: this, camera: this._camera })
     stats.end()
