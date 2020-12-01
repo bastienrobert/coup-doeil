@@ -1,7 +1,10 @@
-import { Vec3, Box, Camera, Mesh, OGLRenderingContext, Program } from 'ogl'
+import { Vec3, Box, Camera, OGLRenderingContext, Program } from 'ogl'
+
+import RaycastableMesh from '../core/RaycastableMesh'
 
 import vertex from '~/shaders/cube/vertex.glsl'
 import fragment from '~/shaders/cube/fragment.glsl'
+
 import { getWorldPositionFromViewportCoords } from '~/utils/maths'
 
 interface CubeParams {
@@ -9,7 +12,7 @@ interface CubeParams {
   camera: Camera
 }
 
-export default class Cube extends Mesh {
+export default class Cube extends RaycastableMesh {
   _gl: OGLRenderingContext
   _mouse: Vec3
   _camera: Camera
@@ -20,6 +23,9 @@ export default class Cube extends Mesh {
       program: new Program(gl, {
         vertex,
         fragment,
+        uniforms: {
+          uHit: { value: 0 },
+        },
       }),
     })
 
@@ -27,6 +33,12 @@ export default class Cube extends Mesh {
 
     this._mouse = mouse
     this._camera = camera
+
+    this.onBeforeRender(this._updateHitUniform)
+  }
+
+  _updateHitUniform = () => {
+    this.program.uniforms.uHit.value = this.isHit ? 1 : 0
   }
 
   /**

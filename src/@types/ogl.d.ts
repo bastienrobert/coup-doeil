@@ -1518,8 +1518,8 @@ declare module 'ogl' {
         renderOrder,
       }?: Partial<MeshOptions>,
     )
-    onBeforeRender(f: any): this
-    onAfterRender(f: any): this
+    onBeforeRender(f?: any): this
+    onAfterRender(f?: any): this
     draw({ camera }?: Partial<DrawOptions>): void
   }
   // #endregion

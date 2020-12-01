@@ -6,12 +6,15 @@ import {
   Orbit,
   Vec3,
   Vec2,
+  Raycast,
 } from 'ogl'
 import Stats from 'stats.js'
-import { getResolutionNormalizedCoords } from '~/utils/maths'
 
+import RaycastableMesh from './core/RaycastableMesh'
 import Planes from './groups/Planes'
 import Cube from './meshes/Cube'
+
+import { getResolutionNormalizedCoords } from '~/utils/maths'
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -27,6 +30,8 @@ export default class Experience extends Transform {
   _resolution: Vec2
   _mouse: Vec3
   _mouseNorm: Vec3
+  _raycast: Raycast
+  _raycastable: RaycastableMesh[]
   _cube: Cube
   _planes: Planes
 
@@ -49,11 +54,16 @@ export default class Experience extends Transform {
     this._mouseNorm = new Vec3()
     this._listen()
 
+    this._raycast = new Raycast(this._gl)
+    this._raycastable = []
+
     this._cube = new Cube(this._gl, {
       mouse: this._mouseNorm,
       camera: this._camera,
     })
+    this._raycastable.push(this._cube)
     this.addChild(this._cube)
+    console.log(this._cube)
 
     /**
      * @todo
@@ -85,8 +95,7 @@ export default class Experience extends Transform {
   }
 
   _onMouseMove = (e: MouseEvent) => {
-    if (this._mouse.z === 0) return
-    this._mouse.set(e.clientX, e.clientY, 1)
+    this._mouse.set(e.clientX, e.clientY, this._mouse.z)
     getResolutionNormalizedCoords(
       this._mouse,
       this._resolution,
@@ -121,6 +130,11 @@ export default class Experience extends Transform {
     stats.begin()
     const time = t * 0.001
     this._controls.update()
+
+    this._raycastable.forEach((mesh: RaycastableMesh) => (mesh.isHit = false))
+    this._raycast.castMouse(this._camera, this._mouseNorm)
+    const hits = this._raycast.intersectBounds(this._raycastable)
+    hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
 
     this._cube.update(time)
 
