@@ -14,7 +14,21 @@ import RaycastableMesh from './core/RaycastableMesh'
 import Planes from './groups/Planes'
 import Cube from './meshes/Cube'
 
-import { getResolutionNormalizedCoords } from '~/utils/maths'
+import {
+  getResolutionNormalizedCoords,
+  getScaleFromCameraDistance,
+  getWorldMatrix,
+  getWorldPositionFromViewportRectPerc,
+} from '~/utils/maths'
+import {
+  applyMatrix4,
+  box,
+  cloneBox,
+  getIsIntersectedBoundingBox,
+} from '~/utils/box'
+
+const tmp_vec_3 = new Vec3()
+const tmp_cube_bound = box()
 
 const stats = new Stats()
 stats.showPanel(0)
@@ -65,10 +79,6 @@ export default class Experience extends Transform {
     this.addChild(this._cube)
     console.log(this._cube)
 
-    /**
-     * @todo
-     * - should be set on the viewport left/right with %
-     */
     this._planes = new Planes(this._gl, {
       camera: this._camera,
       resolution: this._resolution,
@@ -92,6 +102,8 @@ export default class Experience extends Transform {
 
   _onMouseDown = () => {
     this._mouse.z = 1
+    this._mouseNorm.z = 1
+    if (this._cube.isHit) this._cube.isDown.copy(this._mouseNorm)
   }
 
   _onMouseMove = (e: MouseEvent) => {
@@ -105,6 +117,7 @@ export default class Experience extends Transform {
 
   _onMouseUp = () => {
     this._mouse.z = 0
+    this._cube.isDown.z = 0
   }
 
   dispose() {
@@ -124,6 +137,15 @@ export default class Experience extends Transform {
     this._camera.updateMatrixWorld()
 
     this._planes.resize()
+
+    getWorldPositionFromViewportRectPerc(
+      this._camera,
+      { top: 50, left: (1 / 6) * 100 },
+      this._resolution,
+      this._cube.position,
+    )
+    getWorldMatrix(this._cube, tmp_vec_3)
+    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
   }
 
   _render = (t) => {
@@ -137,6 +159,19 @@ export default class Experience extends Transform {
     hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
 
     this._cube.update(time)
+    this._planes.update()
+
+    // check collisions
+    cloneBox(this._cube.geometry.bounds, tmp_cube_bound)
+    applyMatrix4(tmp_cube_bound, this._cube.worldMatrix)
+    this._planes.alpha.isCollide = getIsIntersectedBoundingBox(
+      this._planes.bounds.alpha,
+      tmp_cube_bound,
+    )
+    this._planes.beta.isCollide = getIsIntersectedBoundingBox(
+      this._planes.bounds.beta,
+      tmp_cube_bound,
+    )
 
     this.renderer.render({ scene: this, camera: this._camera })
     stats.end()
