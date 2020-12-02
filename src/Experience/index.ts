@@ -26,6 +26,8 @@ import {
   cloneBox,
   getIsIntersectedBoundingBox,
 } from '~/utils/box'
+import SceneController from './controllers/SceneController'
+import IntroScene from './scenes/IntroScene'
 
 const tmp_vec_3 = new Vec3()
 const tmp_cube_bound = box()
@@ -39,6 +41,7 @@ export default class Experience extends Transform {
   _gl: OGLRenderingContext
   _rafID: number
 
+  _scenes: SceneController
   _camera: Camera
   _controls: Orbit
   _resolution: Vec2
@@ -84,6 +87,14 @@ export default class Experience extends Transform {
       resolution: this._resolution,
     })
     this.addChild(this._planes)
+
+    this._scenes = new SceneController([
+      new IntroScene(this._gl, {
+        mouse: this._mouse,
+        camera: this._camera,
+        resolution: this._resolution,
+      }),
+    ])
 
     this._rafID = requestAnimationFrame(this._render)
   }
