@@ -82,5 +82,5 @@ export function getScaleFromCameraDistance(
 
 export function getWorldMatrix(object: Transform, out = new Vec3()) {
   object.updateMatrixWorld()
-  return out.applyMatrix4(object.worldMatrix)
+  return out.set(0, 0, 0).applyMatrix4(object.worldMatrix)
 }
