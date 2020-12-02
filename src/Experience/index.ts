@@ -13,6 +13,7 @@ import Stats from 'stats.js'
 
 import RaycastableMesh from './core/RaycastableMesh'
 import Planes from './groups/Planes'
+import Object from './meshes/Object'
 import Cube from './meshes/Cube'
 
 import Spot from './pass/Spot'
@@ -54,6 +55,7 @@ export default class Experience extends Transform {
   _cube: Cube
   _spot: Spot
   _planes: Planes
+  _object: Object
 
   constructor(renderer: Renderer) {
     super()
@@ -92,6 +94,12 @@ export default class Experience extends Transform {
     })
     this.addChild(this._planes)
 
+    this._object = new Object(this._gl, {
+      camera: this._camera,
+      resolution: this._resolution,
+    })
+    this.addChild(this._object)
+
     this._listen()
     this._rafID = requestAnimationFrame(this._render)
   }
@@ -100,7 +108,7 @@ export default class Experience extends Transform {
     this._spot = new Spot(this._gl, {
       resolution: this._resolution
     })
-    this._post.addPass(this._spot)
+    //this._post.addPass(this._spot)
   }
 
   _listen() {

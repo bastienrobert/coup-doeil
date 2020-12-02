@@ -33,7 +33,6 @@ export default class Spot implements Pass {
       uResolution: { value: resolution },
       uTextureLeft: { value: 1 },
       uTextureRight: { value: 1 },
-      uNormalUVScale: { value: 2 },
       uTime: { value: 0 },
       uColor: { value: new Color(0.3, 0.2, 0.5) }
     }
