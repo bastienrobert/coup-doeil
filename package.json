@@ -26,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "dat.gui": "^0.7.7",
     "inrtia": "https://github.com/bastienrobert/inrtia/tarball/08558cfbd2c64658f66add610a116e120309ce41",
     "ogl": "^0.0.60",
     "preact": "^10.5.4",
@@ -37,6 +38,7 @@
     "@snowpack/plugin-dotenv": "^2.0.4",
     "@snowpack/plugin-sass": "^1.1.1",
     "@snowpack/plugin-typescript": "^1.1.0",
+    "@types/dat.gui": "^0.7.6",
     "del-cli": "^3.0.1",
     "glslify": "^7.1.1",
     "prettier": "^2.0.5",
