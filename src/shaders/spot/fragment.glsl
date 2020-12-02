@@ -26,6 +26,10 @@ vec2 contain(vec2 r, float s, vec2 i) {
   return (vUv * r) / new + offset;
 }
 
+float frame(vec2 c, vec2 r, vec2 p) {
+  return ((1. - step(c.x/r.x, p.x)) * (1. - step(1. - c.y/r.y, p.y)));
+}
+
 void main() {  
   // texture position
   float a = uResolution.x / uResolution.y;
@@ -41,17 +45,8 @@ void main() {
     uTextureLeftAlphaDimension
   ) + p).r;
 
-  float cltLeft = (1. - step(gl_FragCoord.x/uResolution.x, uTextureLeftAlphaPosition.x * .01))
-    * (1. - step(1. - gl_FragCoord.y/uResolution.y, uTextureLeftAlphaPosition.y * .01))
-    * tLeft;
 
-  // vec2 st = vec2(gl_FragCoord.xy / uResolution);
-  // // position clamp
-  // vec2 c = vec2(
-  //   st.x + ((uResolution.x - uTextureLeftAlphaSize.x) / uResolution.x),
-  //   st.y + (uTextureLeftAlphaSize.y / uResolution.y)
-  // );
-  
+  float cltLeft = frame(gl_FragCoord.xy, uResolution, uTextureLeftAlphaPosition * .01) * tLeft;
   
   vec4 spot = vec4(vec3(
     cltLeft
