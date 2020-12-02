@@ -7,6 +7,7 @@ import {
   Vec3,
   Vec2,
   Raycast,
+  Post,
 } from 'ogl'
 import Stats from 'stats.js'
 
@@ -16,10 +17,12 @@ import SceneController from './controllers/SceneController'
 import IntroScene from './scenes/IntroScene'
 
 import Planes from './groups/Planes'
+import Object from './meshes/Object'
 import Cube from './meshes/Cube'
 import gui from './gui'
 
 import { getResolutionNormalizedCoords } from '~/utils/maths'
+import Spot from './pass/Spot'
 
 const IS_TOUCHABLE = 'ontouchstart' in window
 
@@ -37,13 +40,17 @@ export default class Experience extends Transform {
   _scenes: SceneController
   _camera: Camera
   _controls: Orbit
+  _post: Post
   _resolution: Vec2
   _mouse: Vec3
   _mouseNorm: Vec3
   _raycast: Raycast
   _raycastable: RaycastableMesh[]
+
   _cube: Cube
+  _spot: Spot
   _planes: Planes
+  _object: Object
 
   constructor(renderer: Renderer) {
     super()
@@ -80,12 +87,31 @@ export default class Experience extends Transform {
     )
     this.addChild(this._scenes)
 
+    this._object = new Object(this._gl, {
+      camera: this._camera,
+      resolution: this._resolution,
+    })
+    this.addChild(this._object)
+
+    this._post = new Post(this._gl)
+    this._initPass()
+
     this._initGUI()
     this._listen()
     this._rafID = requestAnimationFrame(this._render)
   }
 
+  _initPass() {
+    this._spot = new Spot(this._gl, {
+      resolution: this._resolution
+    })
+    //this._post.addPass(this._spot)
+  }
+
   _listen() {
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('keydown', this._onKeyDown)
+    document.addEventListener('keyup', this._onKeyUp)
     document.addEventListener('mousedown', this._onMouseDown)
     document.addEventListener('mousemove', this._onMouseMove)
     document.addEventListener('mouseup', this._onMouseUp)
@@ -95,6 +121,8 @@ export default class Experience extends Transform {
   }
 
   _unlisten() {
+    document.removeEventListener('keydown', this._onKeyDown)
+    document.removeEventListener('keyup', this._onKeyUp)
     document.removeEventListener('mousedown', this._onMouseDown)
     document.removeEventListener('mousemove', this._onMouseMove)
     document.removeEventListener('mouseup', this._onMouseUp)
@@ -141,6 +169,23 @@ export default class Experience extends Transform {
     this._unlisten()
   }
 
+
+  _onKeyDown = (e: KeyboardEvent) => {
+    if (e.code == 'ArrowRight') {
+      this._spot.setSide('LEFT')
+    }
+    else if (e.code == 'ArrowLeft') {
+      this._spot.setSide('RIGHT')
+    }
+    else {
+      this._spot.setSide('BOTH')
+    }
+  }
+
+  _onKeyUp = (e: KeyboardEvent) => {
+    this._spot.setSide('BOTH')
+  }
+
   resize = () => {
     this._resolution.set(
       this.renderer.gl.canvas.width,
@@ -150,22 +195,27 @@ export default class Experience extends Transform {
       aspect: this._resolution.x / this._resolution.y,
     })
     this._camera.updateMatrixWorld()
+    this._post.resize()
+    this._spot.resize()
 
     this._scenes.resize()
   }
 
-  _render = (t) => {
+  _render = (t: number) => {
     stats.begin()
+    const time = t * 0.001
+
     this._controls.update()
+    this._spot.update(time)
 
     this._raycastable.forEach((mesh: RaycastableMesh) => (mesh.isHit = false))
     this._raycast.castMouse(this._camera, this._mouseNorm)
     const hits = this._raycast.intersectBounds(this._raycastable)
     hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
 
-    this._scenes.update(t * 0.001)
+    this._scenes.update(time)
 
-    this.renderer.render({ scene: this, camera: this._camera })
+    this._post.render({ scene: this, camera: this._camera })
     stats.end()
 
     this._rafID = requestAnimationFrame(this._render)

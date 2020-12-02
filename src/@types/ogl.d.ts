@@ -21,7 +21,7 @@ declare module 'ogl/src/math/functions/ColorFunc' {
   export function hexToRGB(hex: any): number[]
   export function numberToRGB(num: any): number[]
   export function parseColor(color?: any): IArguments | number[]
-  export {}
+  export { }
 }
 
 declare module 'ogl/src/math/functions/EulerFunc' {
@@ -1822,10 +1822,10 @@ declare module 'ogl' {
   // #region Texture
   export interface TextureOptions {
     image:
-      | HTMLImageElement
-      | HTMLVideoElement
-      | HTMLImageElement[]
-      | ArrayBufferView
+    | HTMLImageElement
+    | HTMLVideoElement
+    | HTMLImageElement[]
+    | ArrayBufferView
     target: number
     type: number
     format: number
@@ -2490,11 +2490,11 @@ declare module 'ogl' {
     targetOnly: any
   }
   export interface Pass {
-    mesh: Mesh
-    program: Program
-    uniforms: any
-    enabled: boolean
-    textureUniform: any
+    mesh?: Mesh
+    program?: Program
+    uniforms?: any
+    enabled?: boolean
+    textureUniform?: any
     vertex?: string
     fragment?: string
   }
@@ -2747,17 +2747,17 @@ declare module 'ogl' {
   // #region TextureLoader
   export interface TextureLoaderOptions {
     src:
-      | Partial<{
-          pvrtc: string
-          s3tc: string
-          etc: string
-          etc1: string
-          astc: string
-          webp: string
-          jpg: string
-          png: string
-        }>
-      | string
+    | Partial<{
+      pvrtc: string
+      s3tc: string
+      etc: string
+      etc1: string
+      astc: string
+      webp: string
+      jpg: string
+      png: string
+    }>
+    | string
     wrapS: number
     wrapT: number
     anisotropy: number
