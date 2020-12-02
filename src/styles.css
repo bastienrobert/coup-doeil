@@ -4,6 +4,7 @@ html {
 
 body {
   font-family: sans-serif;
+  user-select: none;
   font-size: 16px;
   min-height: 100vh;
 }

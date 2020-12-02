@@ -7,13 +7,15 @@ import {
   Vec3,
   Vec2,
   Raycast,
+  Post,
 } from 'ogl'
 import Stats from 'stats.js'
 
 import RaycastableMesh from './core/RaycastableMesh'
 import Planes from './groups/Planes'
 import Cube from './meshes/Cube'
-import Spot from './meshes/Spot'
+
+import Spot from './pass/Spot'
 
 import {
   getResolutionNormalizedCoords,
@@ -42,6 +44,7 @@ export default class Experience extends Transform {
 
   _camera: Camera
   _controls: Orbit
+  _post: Post
   _resolution: Vec2
   _mouse: Vec3
   _mouseNorm: Vec3
@@ -69,7 +72,9 @@ export default class Experience extends Transform {
     this._resolution = new Vec2()
     this._mouse = new Vec3()
     this._mouseNorm = new Vec3()
-    this._listen()
+
+    this._post = new Post(this._gl)
+    this._initPass()
 
     this._raycast = new Raycast(this._gl)
     this._raycastable = []
@@ -80,10 +85,6 @@ export default class Experience extends Transform {
     })
     this._raycastable.push(this._cube)
     this.addChild(this._cube)
-    this._spot = new Spot(this._gl, {
-      resolution: this._resolution
-    })
-    this.addChild(this._spot)
 
     this._planes = new Planes(this._gl, {
       camera: this._camera,
@@ -95,7 +96,15 @@ export default class Experience extends Transform {
     this._rafID = requestAnimationFrame(this._render)
   }
 
+  _initPass() {
+    this._spot = new Spot(this._gl, {
+      resolution: this._resolution
+    })
+    this._post.addPass(this._spot)
+  }
+
   _listen() {
+    document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', this._onKeyDown)
     document.addEventListener('keyup', this._onKeyUp)
     document.addEventListener('mousedown', this._onMouseDown)
@@ -177,6 +186,8 @@ export default class Experience extends Transform {
       aspect: this._resolution.x / this._resolution.y,
     })
     this._camera.updateMatrixWorld()
+    this._post.resize()
+    this._spot.resize()
 
     this._planes.resize()
 
@@ -217,7 +228,7 @@ export default class Experience extends Transform {
       tmp_cube_bound,
     )
 
-    this.renderer.render({ scene: this, camera: this._camera })
+    this._post.render({ scene: this, camera: this._camera })
     stats.end()
 
     this._rafID = requestAnimationFrame(this._render)
