@@ -55,6 +55,8 @@ export default class Planes extends Transform {
   }
 
   resize = () => {
+    this._camera.updateMatrixWorld()
+
     getWorldPositionFromViewportRectPerc(
       this._camera,
       { top: 0, left: 0 },
@@ -62,9 +64,10 @@ export default class Planes extends Transform {
       this.alpha.position,
     )
     getWorldMatrix(this.alpha, tmp_vec_3)
+    tmp_vec_3.z = 0
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
 
-    this.alpha.scale.set(tmp_vec_3)
+    this.alpha.scale.copy(tmp_vec_3)
     this.alpha.scale.x *= 1 / 3
 
     this.alpha.position.x += this.alpha.width
@@ -78,9 +81,10 @@ export default class Planes extends Transform {
     )
 
     getWorldMatrix(this.beta, tmp_vec_3)
+    tmp_vec_3.z = 0
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
 
-    this.beta.scale.set(tmp_vec_3)
+    this.beta.scale.copy(tmp_vec_3)
     this.beta.scale.x *= 1 / 3
 
     this.beta.position.x -= this.beta.width
@@ -88,6 +92,7 @@ export default class Planes extends Transform {
   }
 
   update() {
+    // this.resize()
     cloneBox(this.alpha.geometry.bounds, this.bounds.alpha)
     cloneBox(this.beta.geometry.bounds, this.bounds.beta)
     applyMatrix4(this.bounds.alpha, this.alpha.worldMatrix)

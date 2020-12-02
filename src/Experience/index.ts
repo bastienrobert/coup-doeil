@@ -27,6 +27,8 @@ import {
   getIsIntersectedBoundingBox,
 } from '~/utils/box'
 
+const IS_TOUCHABLE = 'ontouchstart' in window
+
 const tmp_vec_3 = new Vec3()
 const tmp_cube_bound = box()
 
@@ -123,6 +125,9 @@ export default class Experience extends Transform {
       this._resolution,
       this._mouseNorm,
     )
+    if (IS_TOUCHABLE) {
+      this.rotation.set(this._mouseNorm.x * 0.1, this._mouseNorm.y * 0.1, 0)
+    }
   }
 
   _onTouchMove = (e: TouchEvent) => {
