@@ -6,6 +6,7 @@ import spotT from '~/assets/textures/spot.png'
 
 import vertex from '~/shaders/spot/vertex.glsl'
 import fragment from '~/shaders/spot/fragment.glsl'
+import gui from '../gui'
 
 interface SpotParams {
   resolution: Vec2
@@ -27,15 +28,20 @@ export default class Spot implements Pass {
       tSpot: {
         value: TextureLoader.load(gl, {
           src: spotT,
-          generateMipmaps: false
-        })
+          generateMipmaps: false,
+        }),
       },
       uResolution: { value: resolution },
       uTextureLeft: { value: 1 },
       uTextureRight: { value: 1 },
+      uTextureLeftAlphaPosition: { value: new Vec2(10, 10) },
+      uTextureLeftAlphaScale: { value: 0.2 },
+      uTextureLeftAlphaDimension: { value: new Vec2(2048, 2048) },
       uTime: { value: 0 },
-      uColor: { value: new Color(0.3, 0.2, 0.5) }
+      uColor: { value: new Color(0.3, 0.2, 0.5) },
     }
+
+    this._initGUI()
   }
 
   setSide(side: SpotSide) {
@@ -56,11 +62,20 @@ export default class Spot implements Pass {
   }
 
   resize = () => {
-    console.log(this)
     this._resolution.set(this._resolution.x, this._resolution.y)
   }
 
   update = (t: number) => {
     this.uniforms.uTime.value = t
+  }
+
+  _initGUI() {
+    gui.add(this.uniforms.uTextureLeftAlphaScale, 'value').step(.1) // prettier-ignore
+    const textureLeftAlphaPositionC = gui.addFolder('textureLeftAlphaPosition') // prettier-ignore
+    textureLeftAlphaPositionC.add(this.uniforms.uTextureLeftAlphaPosition.value, 'x') // prettier-ignore
+    textureLeftAlphaPositionC.add(this.uniforms.uTextureLeftAlphaPosition.value, 'y') // prettier-ignore
+    const textureLeftAlphaDimensionC = gui.addFolder('textureLeftAlphaDimension') // prettier-ignore
+    textureLeftAlphaDimensionC.add(this.uniforms.uTextureLeftAlphaDimension.value, 'x') // prettier-ignore
+    textureLeftAlphaDimensionC.add(this.uniforms.uTextureLeftAlphaDimension.value, 'y') // prettier-ignore
   }
 }

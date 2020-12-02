@@ -103,13 +103,13 @@ export default class Experience extends Transform {
 
   _initPass() {
     this._spot = new Spot(this._gl, {
-      resolution: this._resolution
+      resolution: this._resolution,
     })
-    //this._post.addPass(this._spot)
+    this._post.addPass(this._spot)
   }
 
   _listen() {
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('contextmenu', this._onContextMenu)
     document.addEventListener('keydown', this._onKeyDown)
     document.addEventListener('keyup', this._onKeyUp)
     document.addEventListener('mousedown', this._onMouseDown)
@@ -121,6 +121,7 @@ export default class Experience extends Transform {
   }
 
   _unlisten() {
+    document.removeEventListener('contextmenu', this._onContextMenu)
     document.removeEventListener('keydown', this._onKeyDown)
     document.removeEventListener('keyup', this._onKeyUp)
     document.removeEventListener('mousedown', this._onMouseDown)
@@ -129,6 +130,10 @@ export default class Experience extends Transform {
     document.removeEventListener('touchstart', this._onTouchStart)
     document.removeEventListener('touchmove', this._onTouchMove)
     document.removeEventListener('touchend', this._onMouseUp)
+  }
+
+  _onContextMenu = (e) => {
+    e.preventDefault()
   }
 
   _onMouseDown = () => {
@@ -169,15 +174,12 @@ export default class Experience extends Transform {
     this._unlisten()
   }
 
-
   _onKeyDown = (e: KeyboardEvent) => {
     if (e.code == 'ArrowRight') {
       this._spot.setSide('LEFT')
-    }
-    else if (e.code == 'ArrowLeft') {
+    } else if (e.code == 'ArrowLeft') {
       this._spot.setSide('RIGHT')
-    }
-    else {
+    } else {
       this._spot.setSide('BOTH')
     }
   }
