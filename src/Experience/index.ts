@@ -74,6 +74,7 @@ export default class Experience extends Transform {
     this._cube = new Cube(this._gl, {
       mouse: this._mouseNorm,
       camera: this._camera,
+      resolution: this._resolution,
     })
     this._raycastable.push(this._cube)
     this.addChild(this._cube)
@@ -151,15 +152,7 @@ export default class Experience extends Transform {
     this._camera.updateMatrixWorld()
 
     this._planes.resize()
-
-    getWorldPositionFromViewportRectPerc(
-      this._camera,
-      { top: 50, left: (1 / 6) * 100 },
-      this._resolution,
-      this._cube.position,
-    )
-    getWorldMatrix(this._cube, tmp_vec_3)
-    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
+    this._cube.resize()
   }
 
   _render = (t) => {
