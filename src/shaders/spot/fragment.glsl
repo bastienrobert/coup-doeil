@@ -1,8 +1,8 @@
 precision highp float;
 
 uniform float uTime;
-uniform float uTextureLeft;
-uniform float uTextureRight;
+uniform float uLeftEnable;
+uniform float uRightEnable;
 uniform float uNormalUVScale;
 
 uniform vec3 uColor;
@@ -12,7 +12,9 @@ uniform vec2 uTextureLeftAlphaPosition;
 uniform float uTextureLeftAlphaScale;
 uniform vec2 uTextureLeftAlphaDimension;
 
-uniform sampler2D tSpot;
+uniform sampler2D tLeft;
+uniform sampler2D tRight;
+uniform sampler2D tData; 
 uniform sampler2D tMap; 
 
 varying vec2 vUv;
@@ -39,18 +41,19 @@ void main() {
   );
 
   // texture contain
-  float tLeft = texture2D(tSpot, contain(
+  float aLeft = texture2D(tLeft, contain(
     uResolution,
     uTextureLeftAlphaScale,
     uTextureLeftAlphaDimension
   ) + p).r;
 
 
-  float cltLeft = frame(gl_FragCoord.xy, uResolution, uTextureLeftAlphaPosition * .01) * tLeft;
+  float cltLeft = frame(gl_FragCoord.xy, uResolution, uTextureLeftAlphaPosition * .01) * aLeft;
   
   vec4 spot = vec4(vec3(
     cltLeft
   ), 1.);
 
-  gl_FragColor = (1. - spot) * texture2D(tMap, vUv) ;
+  gl_FragColor = texture2D(tData, vec2(1, 0));
+  // gl_FragColor = (1. - spot) * texture2D(tMap, vUv) ;
 }
