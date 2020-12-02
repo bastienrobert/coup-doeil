@@ -12,37 +12,32 @@ import {
 import Stats from 'stats.js'
 
 import RaycastableMesh from './core/RaycastableMesh'
+
+import SceneController from './controllers/SceneController'
+import IntroScene from './scenes/IntroScene'
+
 import Planes from './groups/Planes'
 import Object from './meshes/Object'
 import Cube from './meshes/Cube'
+import gui from './gui'
 
+import { getResolutionNormalizedCoords } from '~/utils/maths'
 import Spot from './pass/Spot'
 
-import {
-  getResolutionNormalizedCoords,
-  getScaleFromCameraDistance,
-  getWorldMatrix,
-  getWorldPositionFromViewportRectPerc,
-} from '~/utils/maths'
-import {
-  applyMatrix4,
-  box,
-  cloneBox,
-  getIsIntersectedBoundingBox,
-} from '~/utils/box'
-
-const tmp_vec_3 = new Vec3()
-const tmp_cube_bound = box()
+const IS_TOUCHABLE = 'ontouchstart' in window
 
 const stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
+
+const guiData: any = {}
 
 export default class Experience extends Transform {
   renderer: Renderer
   _gl: OGLRenderingContext
   _rafID: number
 
+  _scenes: SceneController
   _camera: Camera
   _controls: Orbit
   _post: Post
@@ -72,27 +67,25 @@ export default class Experience extends Transform {
     this._controls.enabled = false
 
     this._resolution = new Vec2()
-    this._mouse = new Vec3()
-    this._mouseNorm = new Vec3()
-
-    this._post = new Post(this._gl)
-    this._initPass()
+    // MOUSE DISTANCE FAR AWAY TO PREVENT COLLISIONS ON LOAD
+    this._mouse = new Vec3(-1000)
+    this._mouseNorm = new Vec3(-1000)
 
     this._raycast = new Raycast(this._gl)
     this._raycastable = []
 
-    this._cube = new Cube(this._gl, {
-      mouse: this._mouseNorm,
-      camera: this._camera,
-    })
-    this._raycastable.push(this._cube)
-    this.addChild(this._cube)
-
-    this._planes = new Planes(this._gl, {
-      camera: this._camera,
-      resolution: this._resolution,
-    })
-    this.addChild(this._planes)
+    this._scenes = new SceneController(
+      [
+        new IntroScene(this._gl, {
+          mouse: this._mouseNorm,
+          camera: this._camera,
+          resolution: this._resolution,
+          raycastable: this._raycastable,
+        }),
+      ],
+      'intro',
+    )
+    this.addChild(this._scenes)
 
     this._object = new Object(this._gl, {
       camera: this._camera,
@@ -100,6 +93,10 @@ export default class Experience extends Transform {
     })
     this.addChild(this._object)
 
+    this._post = new Post(this._gl)
+    this._initPass()
+
+    this._initGUI()
     this._listen()
     this._rafID = requestAnimationFrame(this._render)
   }
@@ -134,14 +131,14 @@ export default class Experience extends Transform {
     document.removeEventListener('touchend', this._onMouseUp)
   }
 
-  _onMouseDown = (e: MouseEvent | Touch) => {
+  _onMouseDown = () => {
     this._mouse.z = 1
     this._mouseNorm.z = 1
-    if (this._cube.isHit) this._cube.isDown.copy(this._mouseNorm)
+    this._scenes.onMouseDown()
   }
 
-  _onTouchStart = (e: TouchEvent) => {
-    this._onMouseDown(e.touches[0])
+  _onTouchStart = () => {
+    this._onMouseDown()
   }
 
   _onMouseMove = (e: MouseEvent | Touch) => {
@@ -151,6 +148,10 @@ export default class Experience extends Transform {
       this._resolution,
       this._mouseNorm,
     )
+    if (IS_TOUCHABLE) {
+      this.rotation.set(this._mouseNorm.x * 0.1, this._mouseNorm.y * 0.1, 0)
+    }
+    this._scenes.onMouseMove()
   }
 
   _onTouchMove = (e: TouchEvent) => {
@@ -159,7 +160,7 @@ export default class Experience extends Transform {
 
   _onMouseUp = () => {
     this._mouse.z = 0
-    this._cube.isDown.z = 0
+    this._scenes.onMouseUp()
   }
 
   dispose() {
@@ -197,21 +198,12 @@ export default class Experience extends Transform {
     this._post.resize()
     this._spot.resize()
 
-    this._planes.resize()
-
-    getWorldPositionFromViewportRectPerc(
-      this._camera,
-      { top: 50, left: (1 / 6) * 100 },
-      this._resolution,
-      this._cube.position,
-    )
-    getWorldMatrix(this._cube, tmp_vec_3)
-    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
+    this._scenes.resize()
   }
 
   _render = (t: number) => {
     stats.begin()
-    const time = t * .001
+    const time = t * 0.001
 
     this._controls.update()
     this._spot.update(time)
@@ -221,24 +213,19 @@ export default class Experience extends Transform {
     const hits = this._raycast.intersectBounds(this._raycastable)
     hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
 
-    this._cube.update(time)
-    this._planes.update()
-
-    // check collisions
-    cloneBox(this._cube.geometry.bounds, tmp_cube_bound)
-    applyMatrix4(tmp_cube_bound, this._cube.worldMatrix)
-    this._planes.alpha.isCollide = getIsIntersectedBoundingBox(
-      this._planes.bounds.alpha,
-      tmp_cube_bound,
-    )
-    this._planes.beta.isCollide = getIsIntersectedBoundingBox(
-      this._planes.bounds.beta,
-      tmp_cube_bound,
-    )
+    this._scenes.update(time)
 
     this._post.render({ scene: this, camera: this._camera })
     stats.end()
 
     this._rafID = requestAnimationFrame(this._render)
+  }
+
+  _initGUI() {
+    guiData.scenes = this._scenes.name
+    gui
+      .add(guiData, 'scenes')
+      .options(this._scenes.scenes.map((s) => s.name))
+      .onChange(this._scenes.set)
   }
 }
