@@ -1,7 +1,8 @@
-import { Renderer, Program, Color, Mesh, Triangle, TextureLoader, Vec2 } from 'ogl'
+import { Program, Color, Mesh, Triangle, TextureLoader, Vec2 } from 'ogl'
 
 import spotLeft from '~/assets/textures/spotLeft.png'
 import spotRight from '~/assets/textures/spotRight.png'
+import spotT from '~/assets/textures/spot.png'
 
 import vertex from '~/shaders/spot/vertex.glsl'
 import fragment from '~/shaders/spot/fragment.glsl'
@@ -20,15 +21,9 @@ export default class Spot extends Mesh {
         vertex,
         fragment,
         uniforms: {
-          tLeft: {
+          tSpot: {
             value: TextureLoader.load(gl, {
-              src: spotLeft,
-              generateMipmaps: false
-            })
-          },
-          tRight: {
-            value: TextureLoader.load(gl, {
-              src: spotRight,
+              src: spotT,
               generateMipmaps: false
             })
           },

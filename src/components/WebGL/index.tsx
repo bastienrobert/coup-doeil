@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useEffect, useRef } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
 import { Renderer } from 'ogl'
 
 import Experience from '~/Experience'
@@ -13,6 +13,11 @@ export default function WebGL() {
   const rendererRef = useRef<Renderer>()
   const experienceRef = useRef<Experience>()
 
+  const onResize = useCallback(() => {
+    rendererRef.current.setSize(window.innerWidth, window.innerHeight)
+    experienceRef.current.resize()
+  }, [rendererRef, experienceRef])
+
   useEffect(() => {
     rendererRef.current = new Renderer({
       canvas: canvasRef.current,
@@ -24,10 +29,7 @@ export default function WebGL() {
     }
   }, [])
 
-  useOnResize(() => {
-    rendererRef.current.setSize(window.innerWidth, window.innerHeight)
-    experienceRef.current.resize()
-  }, true)
+  useOnResize(onResize, true)
 
   return <canvas className={css.WebGL} ref={canvasRef} />
 }
