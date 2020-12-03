@@ -1,7 +1,9 @@
 import { Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
-import bat from '~/assets/textures/stuffs/bat.png'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '~/Experience/meshes/CollidablePlane'
+import gearsShadow from '~/assets/textures/stuffs/gears_shadow.png'
 
 import {
   getScaleFromCameraDistance,
@@ -11,16 +13,16 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 62, left: 28 }
-const SIZE = 0.24
+const POSITION = { top: 70, left: 25 }
+const SIZE = 0.09
 
-export default class Bat extends StaticPlane {
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+export default class GearsShadow extends CollidablePlane {
+  constructor(gl, params: CollidablePlaneParams) {
     super(gl, {
+      ...params,
       transparent: true,
-      texture: bat,
-      camera,
-      resolution,
+      texture: gearsShadow,
+      depthTest: false,
     })
   }
 
@@ -32,8 +34,7 @@ export default class Bat extends StaticPlane {
       tmp_vec_3,
     )
     this.position.copy(tmp_vec_3)
-    this.rotation.set(0, 0, -Math.PI / 2)
-    this.position.z = 0.4
+    this.position.z = 0.8
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)

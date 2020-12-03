@@ -2,7 +2,7 @@ import Inrtia from 'inrtia'
 
 type InrtiaValue = number | { [key: string]: any } | any[]
 
-interface InrtiaConfig {
+interface IntInrtiaConfig {
   friction: number
   rigidity: number
   interpolation: 'basic' | 'bounce' | 'elastic'
@@ -12,8 +12,10 @@ interface InrtiaConfig {
 
 type SpringConfigWithoutCallback = Omit<SpringConfig, 'callback'>
 
+export type InrtiaConfig = Partial<IntInrtiaConfig>
+
 export interface SpringConfig {
-  config?: Partial<InrtiaConfig>
+  config?: InrtiaConfig
   callback?: (current?: InrtiaValue, previous?: InrtiaValue) => void
   value: InrtiaValue
 }

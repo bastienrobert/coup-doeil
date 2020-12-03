@@ -1,7 +1,9 @@
 import { Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
-import gearsShadow from '~/assets/textures/stuffs/gears_shadow.png'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '~/Experience/meshes/CollidablePlane'
+import clockShadow from '~/assets/textures/stuffs/clock_shadow.png'
 
 import {
   getScaleFromCameraDistance,
@@ -11,16 +13,16 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 70, left: 25 }
-const SIZE = 0.09
+const POSITION = { bottom: 30, left: 45 }
+const SIZE = 0.1
 
-export default class GearsShadow extends StaticPlane {
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+export default class ClockShadow extends CollidablePlane {
+  constructor(gl, params: CollidablePlaneParams) {
     super(gl, {
+      ...params,
       transparent: true,
-      texture: gearsShadow,
-      camera,
-      resolution,
+      texture: clockShadow,
+      depthTest: false,
     })
   }
 

@@ -1,8 +1,9 @@
 import { Camera, OGLRenderingContext, Transform, Vec2, Vec3 } from 'ogl'
 
-import { Scene, SceneParams } from '../../controllers/SceneController'
+import Game from '~/Experience/Game'
+import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
 
-import RaycastableMesh from '../../core/RaycastableMesh'
+import RaycastableMesh from '~/Experience/core/RaycastableMesh'
 
 import Background from './objects/Background'
 import Floor from './groups/Floor'
@@ -12,13 +13,14 @@ import MiddleShelf from './groups/MiddleShelf'
 import BottomRightShelf from './groups/BottomRightShelf'
 import BottomLeftShelf from './groups/BottomLeftShelf'
 
-import gui from '../../gui'
+import gui from '~/Experience/gui'
 
 export default class StuffScene extends Transform implements Scene {
   name = 'stuff'
   raycastable: RaycastableMesh[]
 
   _gl: OGLRenderingContext
+  _game: Game
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
@@ -31,38 +33,80 @@ export default class StuffScene extends Transform implements Scene {
   _bottomLeftShelf: BottomLeftShelf
   _topRightShelf: TopRightShelf
 
-  constructor(gl, { resolution, mouse, camera }: SceneParams) {
+  constructor(gl, { game, resolution, mouse, camera }: SceneParams) {
     super()
 
     this._gl = gl
 
+    this._game = game
     this._resolution = resolution
     this._mouse = mouse
     this._camera = camera
+
     this.raycastable = []
 
     this._background = new Background(gl, { camera, resolution })
     this.addChild(this._background)
 
-    this._floor = new Floor(gl, { camera, resolution })
-    this.addChild(this._floor)
-
-    this._topLeftShelf = new TopLeftShelf(gl, { camera, resolution, mouse })
+    this._topLeftShelf = new TopLeftShelf(gl, {
+      camera,
+      resolution,
+      mouse,
+      onCollide: this._onCollide,
+    })
     this.addChild(this._topLeftShelf)
 
-    this._middleShelf = new MiddleShelf(gl, { camera, resolution })
+    this._middleShelf = new MiddleShelf(gl, {
+      camera,
+      resolution,
+      mouse,
+      onCollide: this._onCollide,
+    })
     this.addChild(this._middleShelf)
 
-    this._bottomRightShelf = new BottomRightShelf(gl, { camera, resolution })
+    this._bottomRightShelf = new BottomRightShelf(gl, {
+      camera,
+      resolution,
+      mouse,
+      onCollide: this._onCollide,
+    })
     this.addChild(this._bottomRightShelf)
 
-    this._bottomLeftShelf = new BottomLeftShelf(gl, { camera, resolution })
+    this._bottomLeftShelf = new BottomLeftShelf(gl, {
+      camera,
+      resolution,
+      mouse,
+    })
     this.addChild(this._bottomLeftShelf)
 
-    this._topRightShelf = new TopRightShelf(gl, { camera, resolution })
+    this._topRightShelf = new TopRightShelf(gl, {
+      camera,
+      resolution,
+      mouse,
+      onCollide: this._onCollide,
+    })
     this.addChild(this._topRightShelf)
 
-    this.raycastable.push(...this._topLeftShelf.raycastables)
+    this._floor = new Floor(gl, {
+      camera,
+      resolution,
+      colliders: [
+        ...this._topLeftShelf.colliders,
+        ...this._middleShelf.colliders,
+        ...this._bottomRightShelf.colliders,
+        ...this._bottomLeftShelf.colliders,
+        ...this._topRightShelf.colliders,
+      ],
+    })
+    this.addChild(this._floor)
+
+    this.raycastable.push(
+      ...this._topLeftShelf.raycastables,
+      ...this._middleShelf.raycastables,
+      ...this._bottomRightShelf.raycastables,
+      ...this._bottomLeftShelf.raycastables,
+      ...this._topRightShelf.raycastables,
+    )
 
     this._initGUI()
   }
@@ -87,12 +131,20 @@ export default class StuffScene extends Transform implements Scene {
     this._bottomRightShelf.resize()
     this._bottomLeftShelf.resize()
     this._topRightShelf.resize()
-    // this._dynamic.resize()
   }
 
   update = (t) => {
-    // this._dynamic.update(t)
     this._topLeftShelf.update(t)
+    this._middleShelf.update(t)
+    this._bottomRightShelf.update(t)
+    this._bottomLeftShelf.update(t)
+    this._topRightShelf.update(t)
+
+    this._floor.update()
+  }
+
+  _onCollide = (name) => {
+    this._game.push(name)
   }
 
   _initGUI() {
