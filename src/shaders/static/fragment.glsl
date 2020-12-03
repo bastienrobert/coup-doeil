@@ -1,7 +1,6 @@
 precision highp float;
 precision highp int;
 
-uniform float uCollide;
 uniform sampler2D uTexture;
 
 varying vec3 vNormal;

@@ -15,6 +15,7 @@ import RaycastableMesh from './core/RaycastableMesh'
 
 import SceneController from './controllers/SceneController'
 import IntroScene from './scenes/IntroScene'
+import StuffScene from './scenes/StuffScene'
 
 import Planes from './groups/Planes'
 import gui from './gui'
@@ -56,7 +57,7 @@ export default class Experience extends Transform {
     this._gl.clearColor(1, 1, 1, 1)
 
     this._camera = new Camera(this._gl)
-    this._camera.position.set(0, 0, 7)
+    this._camera.position.set(0, 0, 10)
     this._camera.lookAt([0, 0, 0])
 
     this._controls = new Orbit(this._camera)
@@ -72,11 +73,11 @@ export default class Experience extends Transform {
 
     this._scenes = new SceneController(
       [
-        new IntroScene(this._gl, {
+        new IntroScene(),
+        new StuffScene(this._gl, {
           mouse: this._mouseNorm,
           camera: this._camera,
           resolution: this._resolution,
-          raycastable: this._raycastable,
         }),
       ],
       'intro',
@@ -95,7 +96,7 @@ export default class Experience extends Transform {
     this._spot = new Spot(this._gl, {
       resolution: this._resolution,
     })
-    this._post.addPass(this._spot)
+    // this._post.addPass(this._spot)
   }
 
   _listen() {
@@ -143,7 +144,7 @@ export default class Experience extends Transform {
       this._resolution,
       this._mouseNorm,
     )
-    if (IS_TOUCHABLE) {
+    if (!IS_TOUCHABLE) {
       this.rotation.set(this._mouseNorm.x * 0.1, this._mouseNorm.y * 0.1, 0)
     }
     this._scenes.onMouseMove()

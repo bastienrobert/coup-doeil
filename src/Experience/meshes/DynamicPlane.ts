@@ -164,16 +164,18 @@ export default class DynamicPlane extends RaycastableMesh {
   }
 
   resize = () => {
+    if (this._positionOnScreen) {
+      getWorldPositionFromViewportRectPerc(
+        this._camera,
+        this._positionOnScreen,
+        this._resolution,
+        tmp_vec_3,
+      )
+    }
+    this._initial.copy(tmp_vec_3)
+
     if (!this._moved) {
-      if (this._positionOnScreen) {
-        getWorldPositionFromViewportRectPerc(
-          this._camera,
-          this._positionOnScreen,
-          this._resolution,
-          this.position,
-        )
-      }
-      this._initial.copy(this.position)
+      this.position.copy(this._initial)
     }
   }
 

@@ -53,7 +53,7 @@ export default class SceneController extends Transform {
     if (this._current?.onMouseUp) this._current.onMouseUp()
   }
 
-  async set(name: string) {
+  set = async (name: string) => {
     const previous = this._current
     const next = this.scenes.find((s) => s.name === name)
 
@@ -62,6 +62,7 @@ export default class SceneController extends Transform {
       if (previous.onBeforeLeave) await previous.onBeforeLeave()
       previous.visible = false
       if (previous.onLeave) await previous.onLeave()
+      if (next?.resize) next.resize()
     }
 
     // HIDE NEXT SCENE

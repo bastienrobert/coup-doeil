@@ -58,10 +58,11 @@ void main() {
   float aRight2 = tex(vec2(1. * 3., 0.), xy, tRight, uTextureDimension).g;
   float aRight = smoothstep(.2, 1., (aRight1 + aRight2));
   
-  vec4 spot = vec4(vec3(
+  vec3 spot = vec3(
     (aLeft * uLeftEnable)
     + (aRight * uRightEnable)
-  ), 1.);
+  );
 
-  gl_FragColor = (1. - spot) * texture2D(tMap, vUv);
+  gl_FragColor = texture2D(tMap, vUv);
+  gl_FragColor.rgb *= (1. - spot);
 }

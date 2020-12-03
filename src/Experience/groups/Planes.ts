@@ -1,6 +1,9 @@
 import { Bounds, Camera, Color, Mesh, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '../meshes/StaticPlane'
+import CollidableMesh from '../core/CollidableMesh'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '../meshes/CollidablePlane'
 
 import {
   getScaleFromCameraDistance,
@@ -13,9 +16,8 @@ import {
   cloneBox,
   getIsIntersectedBoundingBox,
 } from '~/utils/box'
-import CollidableMesh from '../core/CollidableMesh'
 
-interface PlanesParams extends Omit<StaticPlaneParams, 'color'> {
+interface PlanesParams extends Omit<CollidablePlaneParams, 'color'> {
   collides: Mesh[]
 }
 
@@ -28,8 +30,8 @@ export default class Planes extends Transform {
   _collidable: Mesh[]
   _colliders: Mesh[]
 
-  alpha: StaticPlane
-  beta: StaticPlane
+  alpha: CollidablePlane
+  beta: CollidablePlane
 
   constructor(gl, { camera, resolution, collides }: PlanesParams) {
     super()
@@ -39,16 +41,14 @@ export default class Planes extends Transform {
     this._colliders = []
     this._collidable = collides
 
-    this.alpha = new StaticPlane(gl, {
-      color: new Color(0.8, 0.2, 1.0),
+    this.alpha = new CollidablePlane(gl, {
       camera,
       resolution,
     })
     this.addChild(this.alpha)
     this._colliders.push(this.alpha)
 
-    this.beta = new StaticPlane(gl, {
-      color: new Color(1.0, 0.8, 0.2),
+    this.beta = new CollidablePlane(gl, {
       camera,
       resolution,
     })
