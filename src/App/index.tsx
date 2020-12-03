@@ -1,15 +1,15 @@
 import { h } from 'preact'
 
 import WebGL from '~/components/WebGL'
-import HelloWorld from '~/components/HelloWorld'
+import Intro from '~/components/Intro'
 
 import './styles.scss'
 
 export default function App() {
   return (
     <div className="App">
+      <Intro />
       <WebGL />
-      <HelloWorld />
     </div>
   )
 }
