@@ -8,6 +8,7 @@ import Planes from '../groups/Planes'
 import DynamicPlane from '../meshes/DynamicPlane'
 
 import liberty from '~/assets/textures/liberty.png'
+import gui, { newGUITransform } from '../gui'
 
 interface IntroSceneParams extends SceneParams {
   raycastable: RaycastableMesh[]
@@ -54,6 +55,8 @@ export default class IntroScene extends Transform implements Scene {
       collides: [this._dynamic],
     })
     this.addChild(this._planes)
+
+    this._initGUI()
   }
 
   onMouseDown = () => {
@@ -72,5 +75,10 @@ export default class IntroScene extends Transform implements Scene {
   update = (t) => {
     this._dynamic.update(t)
     this._planes.update()
+  }
+
+  _initGUI() {
+    const c = gui.addFolder('intro')
+    newGUITransform('dynamic', this._dynamic, c)
   }
 }
