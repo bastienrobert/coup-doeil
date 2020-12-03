@@ -1,57 +1,59 @@
-import { Bounds, Camera, Color, Transform, Vec2, Vec3 } from 'ogl'
+import { Bounds, Camera, Color, Mesh, Transform, Vec2, Vec3 } from 'ogl'
 
-import Plane, { PlaneParams } from '../meshes/Plane'
+import StaticPlane, { StaticPlaneParams } from '../meshes/StaticPlane'
 
 import {
   getScaleFromCameraDistance,
   getWorldMatrix,
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
-import { applyMatrix4, cloneBox } from '~/utils/box'
+import {
+  applyMatrix4,
+  box,
+  cloneBox,
+  getIsIntersectedBoundingBox,
+} from '~/utils/box'
+import CollidableMesh from '../core/CollidableMesh'
 
-type PlanesParams = Omit<PlaneParams, 'color'>
-
-interface PlanesBounds {
-  alpha: Bounds
-  beta: Bounds
+interface PlanesParams extends Omit<StaticPlaneParams, 'color'> {
+  collides: Mesh[]
 }
 
 const tmp_vec_3 = new Vec3()
+const tmp_bound = box()
 
 export default class Planes extends Transform {
   _camera: Camera
   _resolution: Vec2
+  _collidable: Mesh[]
+  _colliders: Mesh[]
 
-  alpha: Plane
-  beta: Plane
-  bounds: PlanesBounds
+  alpha: StaticPlane
+  beta: StaticPlane
 
-  constructor(gl, { camera, resolution }: PlanesParams) {
+  constructor(gl, { camera, resolution, collides }: PlanesParams) {
     super()
 
     this._camera = camera
     this._resolution = resolution
+    this._colliders = []
+    this._collidable = collides
 
-    this.alpha = new Plane(gl, {
+    this.alpha = new StaticPlane(gl, {
       color: new Color(0.8, 0.2, 1.0),
       camera,
       resolution,
     })
     this.addChild(this.alpha)
-    this.alpha.geometry.computeBoundingBox()
+    this._colliders.push(this.alpha)
 
-    this.beta = new Plane(gl, {
+    this.beta = new StaticPlane(gl, {
       color: new Color(1.0, 0.8, 0.2),
       camera,
       resolution,
     })
     this.addChild(this.beta)
-    this.beta.geometry.computeBoundingBox()
-
-    this.bounds = {
-      alpha: cloneBox(this.alpha.geometry.bounds),
-      beta: cloneBox(this.beta.geometry.bounds),
-    }
+    this._colliders.push(this.beta)
   }
 
   resize = () => {
@@ -93,9 +95,18 @@ export default class Planes extends Transform {
 
   update() {
     // this.resize()
-    cloneBox(this.alpha.geometry.bounds, this.bounds.alpha)
-    cloneBox(this.beta.geometry.bounds, this.bounds.beta)
-    applyMatrix4(this.bounds.alpha, this.alpha.worldMatrix)
-    applyMatrix4(this.bounds.beta, this.beta.worldMatrix)
+    cloneBox(this.alpha.geometry.bounds, this.alpha.bounds)
+    cloneBox(this.beta.geometry.bounds, this.beta.bounds)
+    applyMatrix4(this.alpha.bounds, this.alpha.worldMatrix)
+    applyMatrix4(this.beta.bounds, this.beta.worldMatrix)
+
+    this._collidable.forEach((mesh: Mesh) => {
+      cloneBox(mesh.geometry.bounds, tmp_bound)
+      applyMatrix4(tmp_bound, mesh.worldMatrix)
+
+      this._colliders.forEach((m: CollidableMesh) => {
+        m.isCollide = getIsIntersectedBoundingBox(m.bounds, tmp_bound)
+      })
+    })
   }
 }

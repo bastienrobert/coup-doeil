@@ -17,8 +17,6 @@ import SceneController from './controllers/SceneController'
 import IntroScene from './scenes/IntroScene'
 
 import Planes from './groups/Planes'
-import Object from './meshes/Object'
-import Cube from './meshes/Cube'
 import gui from './gui'
 
 import { getResolutionNormalizedCoords } from '~/utils/maths'
@@ -47,10 +45,8 @@ export default class Experience extends Transform {
   _raycast: Raycast
   _raycastable: RaycastableMesh[]
 
-  _cube: Cube
   _spot: Spot
   _planes: Planes
-  _object: Object
 
   constructor(renderer: Renderer) {
     super()
@@ -59,7 +55,7 @@ export default class Experience extends Transform {
     this._gl = renderer.gl
     this._gl.clearColor(1, 1, 1, 1)
 
-    this._camera = new Camera(this._gl, { aspect: 45 })
+    this._camera = new Camera(this._gl)
     this._camera.position.set(0, 0, 7)
     this._camera.lookAt([0, 0, 0])
 
@@ -86,12 +82,6 @@ export default class Experience extends Transform {
       'intro',
     )
     this.addChild(this._scenes)
-
-    this._object = new Object(this._gl, {
-      camera: this._camera,
-      resolution: this._resolution,
-    })
-    this.addChild(this._object)
 
     this._post = new Post(this._gl)
     this._initPass()
@@ -175,16 +165,20 @@ export default class Experience extends Transform {
   }
 
   _onKeyDown = (e: KeyboardEvent) => {
-    if (e.code == 'ArrowRight') {
-      this._spot.setSide('LEFT')
-    } else if (e.code == 'ArrowLeft') {
-      this._spot.setSide('RIGHT')
-    } else {
-      this._spot.setSide('BOTH')
+    switch (e.code) {
+      case 'ArrowRight':
+        this._spot.setSide('LEFT')
+        break
+      case 'ArrowLeft':
+        this._spot.setSide('RIGHT')
+        break
+      default:
+        this._spot.setSide('BOTH')
+        break
     }
   }
 
-  _onKeyUp = (e: KeyboardEvent) => {
+  _onKeyUp = () => {
     this._spot.setSide('BOTH')
   }
 

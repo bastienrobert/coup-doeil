@@ -1,23 +1,15 @@
 import { Camera, OGLRenderingContext, Transform, Vec2, Vec3 } from 'ogl'
-import {
-  applyMatrix4,
-  box,
-  cloneBox,
-  getIsIntersectedBoundingBox,
-} from '~/utils/box'
 
 import { Scene, SceneParams } from '../controllers/SceneController'
 
 import RaycastableMesh from '../core/RaycastableMesh'
 
 import Planes from '../groups/Planes'
-import Cube from '../meshes/Cube'
+import DynamicPlane from '../meshes/DynamicPlane'
 
 interface IntroSceneParams extends SceneParams {
   raycastable: RaycastableMesh[]
 }
-
-const tmp_cube_bound = box()
 
 export default class IntroScene extends Transform implements Scene {
   name = 'intro'
@@ -28,7 +20,7 @@ export default class IntroScene extends Transform implements Scene {
   _camera: Camera
   _raycastable: RaycastableMesh[]
 
-  _cube: Cube
+  _dynamic: DynamicPlane
   _planes: Planes
 
   constructor(
@@ -44,49 +36,38 @@ export default class IntroScene extends Transform implements Scene {
     this._camera = camera
     this._raycastable = raycastable
 
-    this._cube = new Cube(this._gl, {
+    this._dynamic = new DynamicPlane(this._gl, {
       mouse: this._mouse,
       camera: this._camera,
       resolution: this._resolution,
+      positionOnScreen: { top: 50, left: (1 / 6) * 100 },
     })
-    this._raycastable.push(this._cube)
-    this.addChild(this._cube)
-    console.log(this._cube)
+    this._raycastable.push(this._dynamic)
+    this.addChild(this._dynamic)
 
     this._planes = new Planes(this._gl, {
       camera: this._camera,
       resolution: this._resolution,
+      collides: [this._dynamic],
     })
     this.addChild(this._planes)
   }
 
   onMouseDown = () => {
-    if (this._cube.isHit) this._cube.isDown.copy(this._mouse)
+    if (this._dynamic.isHit) this._dynamic.isDown.copy(this._mouse)
   }
 
   onMouseUp = () => {
-    this._cube.isDown.z = 0
+    this._dynamic.isDown.z = 0
   }
 
   resize = () => {
     this._planes.resize()
-    this._cube.resize()
+    this._dynamic.resize()
   }
 
   update = (t) => {
-    this._cube.update(t)
+    this._dynamic.update(t)
     this._planes.update()
-
-    // check collisions
-    cloneBox(this._cube.geometry.bounds, tmp_cube_bound)
-    applyMatrix4(tmp_cube_bound, this._cube.worldMatrix)
-    this._planes.alpha.isCollide = getIsIntersectedBoundingBox(
-      this._planes.bounds.alpha,
-      tmp_cube_bound,
-    )
-    this._planes.beta.isCollide = getIsIntersectedBoundingBox(
-      this._planes.bounds.beta,
-      tmp_cube_bound,
-    )
   }
 }

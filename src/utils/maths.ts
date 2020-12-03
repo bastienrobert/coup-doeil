@@ -59,9 +59,7 @@ export function getWorldPositionFromViewportRectPerc(
   resolution: Vec2,
   out = new Vec3(),
 ) {
-  tmp_vec_22.set(rect.left ?? 100 - rect.right, rect.top ?? 100 - rect.bottom)
-  getPxFromPerc(tmp_vec_22, resolution, tmp_vec_22)
-  getResolutionNormalizedCoords(tmp_vec_22, resolution, tmp_vec_22)
+  getMouseNormCoordsFromRectPerc(rect, resolution, tmp_vec_22)
   getWorldPositionFromViewportCoords(camera, tmp_vec_22, out)
   return out
 }
@@ -83,4 +81,16 @@ export function getScaleFromCameraDistance(
 export function getWorldMatrix(object: Transform, out = new Vec3()) {
   object.updateMatrixWorld()
   return out.set(0, 0, 0).applyMatrix4(object.worldMatrix)
+}
+
+const tmp_vec_23 = new Vec2()
+export function getMouseNormCoordsFromRectPerc(
+  rect: Rect,
+  resolution: Vec2,
+  out: Vec2,
+) {
+  tmp_vec_23.set(rect.left ?? 100 - rect.right, rect.top ?? 100 - rect.bottom)
+  getPxFromPerc(tmp_vec_23, resolution, tmp_vec_23)
+  getResolutionNormalizedCoords(tmp_vec_23, resolution, out)
+  return out
 }

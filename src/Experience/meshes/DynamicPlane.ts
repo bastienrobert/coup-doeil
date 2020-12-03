@@ -1,4 +1,11 @@
-import { Vec3, Box, Camera, OGLRenderingContext, Program, Vec2 } from 'ogl'
+import {
+  Vec3,
+  Camera,
+  OGLRenderingContext,
+  Program,
+  Vec2,
+  Plane as OGLPlane,
+} from 'ogl'
 
 import RaycastableMesh from '../core/RaycastableMesh'
 
@@ -6,55 +13,60 @@ import vertex from '~/shaders/cube/vertex.glsl'
 import fragment from '~/shaders/cube/fragment.glsl'
 
 import {
+  Rect,
   getScaleFromCameraDistance,
   getWorldMatrix,
   getWorldPositionFromViewportCoords,
-  getResolutionNormalizedCoords,
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
 import { mouseOffsetHandler, MouseOffsetHandler } from '~/utils/handler'
 import spring, { Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
 
-interface CubeParams {
+interface DynamicPlaneParams {
   mouse: Vec3
   resolution: Vec2
   camera: Camera
+  positionOnScreen?: Rect
 }
 
-const tmp_vec_2 = new Vec2()
 const tmp_vec_3 = new Vec3()
 
 const WIDTH = 1
 const HEIGHT = 1
 
-const UP_CONFIG = {
+const DOWN_CONFIG = {
   friction: 9,
   rigidity: 0.05,
 }
-const DOWN_CONFIG = {
+const UP_CONFIG = {
   friction: 30,
   rigidity: 0.15,
 }
 
-export default class Cube extends RaycastableMesh {
+export default class DynamicPlane extends RaycastableMesh {
   _gl: OGLRenderingContext
   _resolution: Vec2
   _mouse: Vec3
   _moved: boolean
   _initial: Vec3
+  _positionOnScreen: Rect
   _positionOnDown: Vec3
   _camera: Camera
   _mouseHandler: MouseOffsetHandler
-  _spring: Spring
+  _mouseSpring: Spring
+  _positionSpring: Spring
   _timestamp: Timestamp
 
   isDown: Vec3
   wasDown: boolean
 
-  constructor(gl, { mouse, camera, resolution }: CubeParams) {
+  constructor(
+    gl,
+    { mouse, camera, resolution, positionOnScreen }: DynamicPlaneParams,
+  ) {
     super(gl, {
-      geometry: new Box(gl, { width: WIDTH, height: HEIGHT, depth: 1 }),
+      geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
         vertex,
         fragment,
@@ -70,10 +82,15 @@ export default class Cube extends RaycastableMesh {
     this._resolution = resolution
     this._positionOnDown = new Vec3()
     this._initial = new Vec3()
+    this._positionOnScreen = positionOnScreen
     this._camera = camera
 
-    this._spring = spring({
+    this._mouseSpring = spring({
       value: new Vec2(),
+      config: UP_CONFIG,
+    })
+    this._positionSpring = spring({
+      value: new Vec3(),
       config: UP_CONFIG,
     })
 
@@ -85,7 +102,7 @@ export default class Cube extends RaycastableMesh {
 
     this.onBeforeRender(this._updateHitUniform)
 
-    this.geometry.computeBoundingBox()
+    this._computeBoundingBox()
   }
 
   get width() {
@@ -94,6 +111,12 @@ export default class Cube extends RaycastableMesh {
 
   get height() {
     return HEIGHT * 0.5 * this.scale.y
+  }
+
+  _computeBoundingBox() {
+    this.geometry.computeBoundingBox()
+    this.geometry.bounds.max.z = 0.5
+    this.geometry.bounds.min.z = -0.5
   }
 
   _isOutViewport() {
@@ -120,7 +143,7 @@ export default class Cube extends RaycastableMesh {
   _mouseHandlerCallback = (init) => {
     getWorldPositionFromViewportCoords(
       this._camera,
-      this._spring.inrtia.value,
+      this._mouseSpring.inrtia.value,
       this.position,
     )
     this.position.sub(init)
@@ -128,39 +151,25 @@ export default class Cube extends RaycastableMesh {
 
   resize = () => {
     if (!this._moved) {
-      getWorldPositionFromViewportRectPerc(
-        this._camera,
-        { top: 50, left: (1 / 6) * 100 },
-        this._resolution,
-        this.position,
-      )
+      if (this._positionOnScreen) {
+        getWorldPositionFromViewportRectPerc(
+          this._camera,
+          this._positionOnScreen,
+          this._resolution,
+          this.position,
+        )
+      }
       this._initial.copy(this.position)
     }
   }
 
-  /**
-   * @todo
-   * - add spring on move
-   */
   update(t: number) {
     this._timestamp.update(t * 1000)
-    this._spring.update(this._timestamp.delta)
+    this._mouseSpring.update(this._timestamp.delta)
+    this._positionSpring.update(this._timestamp.delta)
 
-    if (this.isDown.z) {
-      this._moved = true
-      this._spring.set({
-        value: [this._mouse.x, this._mouse.y],
-        config: DOWN_CONFIG,
-      })
-      this._mouseHandler.callback()
-    } else if (this.wasDown) {
-      this._spring.set({
-        value: [this._mouse.x, this._mouse.y],
-        config: UP_CONFIG,
-      })
-      this._mouseHandler.callback()
-    } else if (this._spring.inrtia.stopped) {
-      this._spring.inrtia.value.set(this._mouse.x, this._mouse.y)
+    if (this.isDown.z && !this.wasDown) {
+      this._mouseSpring.inrtia.value.set(this._mouse.x, this._mouse.y)
       getWorldPositionFromViewportCoords(
         this._camera,
         this._mouse,
@@ -169,18 +178,34 @@ export default class Cube extends RaycastableMesh {
       this._mouseHandler.init.sub(this.position)
     }
 
-    this._mouseHandler.callback()
-
-    if (this._isOutViewport()) {
-      tmp_vec_2.set((1 / 6) * this._resolution.x, 0.5 * this._resolution.y)
-      getResolutionNormalizedCoords(tmp_vec_2, this._resolution, tmp_vec_2)
-      this._mouseHandler.init.set(0, 0, 0)
-      this._spring.set({
-        value: [tmp_vec_2.x, tmp_vec_2.y],
+    if (this.isDown.z) {
+      this._moved = true
+      this._mouseSpring.set({
+        value: [this._mouse.x, this._mouse.y],
+        config: DOWN_CONFIG,
+      })
+    } else if (this.wasDown) {
+      this._mouseSpring.set({
+        value: [this._mouse.x, this._mouse.y],
         config: UP_CONFIG,
       })
-      this.updateMatrixWorld()
     }
+
+    if (!this._mouseSpring.inrtia.stopped) {
+      this._mouseHandler.callback()
+    }
+
+    if (this._isOutViewport()) {
+      this._positionSpring.set({
+        value: [this._initial.x, this._initial.y, this._initial.z],
+        config: DOWN_CONFIG,
+      })
+      this.updateMatrixWorld()
+    } else {
+      this._positionSpring.inrtia.value.copy(this.position)
+    }
+
+    this.position.copy(this._positionSpring.inrtia.value)
     this.wasDown = this.isDown.z ? true : false
   }
 }

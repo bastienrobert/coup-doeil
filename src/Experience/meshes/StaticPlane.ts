@@ -1,7 +1,6 @@
 import {
   Plane as OGLPlane,
   Camera,
-  Mesh,
   OGLRenderingContext,
   Program,
   Vec2,
@@ -10,24 +9,25 @@ import {
 
 import vertex from '~/shaders/plane/vertex.glsl'
 import fragment from '~/shaders/plane/fragment.glsl'
+import CollidableMesh from '../core/CollidableMesh'
 
 const WIDTH = 1
 const HEIGHT = 1
 
-export interface PlaneParams {
+export interface StaticPlaneParams {
   camera: Camera
   resolution: Vec2
   color?: Color
 }
 
-export default class Plane extends Mesh {
+export default class StaticPlane extends CollidableMesh {
   _gl: OGLRenderingContext
   _camera: Camera
   _resolution: Vec2
 
   isCollide: boolean
 
-  constructor(gl, { color, camera, resolution }: PlaneParams) {
+  constructor(gl, { color, camera, resolution }: StaticPlaneParams) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
