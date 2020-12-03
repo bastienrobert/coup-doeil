@@ -6,6 +6,7 @@ import {
   Vec2,
   Plane as OGLPlane,
   TextureLoader,
+  ProgramOptions,
 } from 'ogl'
 
 import RaycastableMesh from '../core/RaycastableMesh'
@@ -24,13 +25,14 @@ import { mouseOffsetHandler, MouseOffsetHandler } from '~/utils/handler'
 import spring, { Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
 
-interface DynamicPlaneParams {
+export interface DynamicPlaneParams extends Partial<ProgramOptions> {
   mouse: Vec3
   resolution: Vec2
   camera: Camera
   texture?: string
   transparent?: boolean
   positionOnScreen?: Rect
+  zOnDown?: number
 }
 
 const tmp_vec_3 = new Vec3()
@@ -52,7 +54,6 @@ export default class DynamicPlane extends RaycastableMesh {
   _resolution: Vec2
   _mouse: Vec3
   _moved: boolean
-  _initial: Vec3
   _positionOnScreen: Rect
   _positionOnDown: Vec3
   _camera: Camera
@@ -60,7 +61,9 @@ export default class DynamicPlane extends RaycastableMesh {
   _mouseSpring: Spring
   _positionSpring: Spring
   _timestamp: Timestamp
+  _zOnDown: number
 
+  initial: Vec3
   isDown: Vec3
   wasDown: boolean
 
@@ -73,14 +76,18 @@ export default class DynamicPlane extends RaycastableMesh {
       texture,
       transparent,
       positionOnScreen,
+      zOnDown = 1,
+      ...program
     }: DynamicPlaneParams,
   ) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
+        ...program,
         vertex,
         fragment,
         transparent,
+        depthTest: false,
         uniforms: {
           uTexture: {
             value: TextureLoader.load(gl, {
@@ -95,12 +102,13 @@ export default class DynamicPlane extends RaycastableMesh {
 
     this._gl = gl
 
+    this.initial = new Vec3()
     this._mouse = mouse
     this._resolution = resolution
     this._positionOnDown = new Vec3()
-    this._initial = new Vec3()
     this._positionOnScreen = positionOnScreen
     this._camera = camera
+    this._zOnDown = zOnDown
 
     this._mouseSpring = spring({
       value: new Vec2(),
@@ -166,7 +174,8 @@ export default class DynamicPlane extends RaycastableMesh {
     this.position.sub(init)
   }
 
-  resize = () => {
+  resize() {
+    tmp_vec_3.set(0, 0, 0)
     if (this._positionOnScreen) {
       getWorldPositionFromViewportRectPerc(
         this._camera,
@@ -175,10 +184,10 @@ export default class DynamicPlane extends RaycastableMesh {
         tmp_vec_3,
       )
     }
-    this._initial.copy(tmp_vec_3)
+    this.initial.copy(tmp_vec_3)
 
     if (!this._moved) {
-      this.position.copy(this._initial)
+      this.position.copy(this.initial)
     }
   }
 
@@ -208,6 +217,7 @@ export default class DynamicPlane extends RaycastableMesh {
         value: [this._mouse.x, this._mouse.y],
         config: UP_CONFIG,
       })
+      this.position.z = this.initial.z
     }
 
     if (!this._mouseSpring.inrtia.stopped) {
@@ -216,7 +226,7 @@ export default class DynamicPlane extends RaycastableMesh {
 
     if (this._isOutViewport()) {
       this._positionSpring.set({
-        value: [this._initial.x, this._initial.y, this._initial.z],
+        value: [this.initial.x, this.initial.y],
         config: DOWN_CONFIG,
       })
       this.updateMatrixWorld()

@@ -1,6 +1,8 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import RaycastableMesh from '~/Experience/core/RaycastableMesh'
+import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import topLeftShelf from '~/assets/textures/stuffs/topLeftShelf.png'
 
 import Boot from '../objects/Boot'
@@ -11,6 +13,7 @@ import {
   getWorldMatrix,
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
+import gui, { newGUIScreenTransform } from '~/Experience/gui'
 
 const tmp_vec_3 = new Vec3()
 
@@ -18,6 +21,8 @@ const BG_POSITION = { top: 30, left: 7 }
 const BG_SIZE = 0.7
 
 export default class TopLeftShelf extends Transform {
+  raycastables: RaycastableMesh[]
+
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -25,11 +30,12 @@ export default class TopLeftShelf extends Transform {
   _boot: Boot
   _bone: Bone
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
 
     this._camera = camera
     this._resolution = resolution
+    this.raycastables = []
 
     this._background = new StaticPlane(gl, {
       texture: topLeftShelf,
@@ -42,6 +48,7 @@ export default class TopLeftShelf extends Transform {
     this._boot = new Boot(gl, {
       texture: topLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
@@ -50,10 +57,15 @@ export default class TopLeftShelf extends Transform {
     this._bone = new Bone(gl, {
       texture: topLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
     this.addChild(this._bone)
+
+    this.raycastables.push(this._boot, this._bone)
+
+    this._initGUI()
   }
 
   resize = () => {
@@ -72,5 +84,15 @@ export default class TopLeftShelf extends Transform {
 
     this._boot.resize()
     this._bone.resize()
+  }
+
+  update(t) {
+    this._boot.update(t)
+    this._bone.update(t)
+  }
+
+  _initGUI() {
+    const c = gui.addFolder('topLeftShelf')
+    newGUIScreenTransform('bone', this._bone, this._camera, this._resolution, c)
   }
 }

@@ -6,6 +6,7 @@ import {
   Vec2,
   Mesh,
   TextureLoader,
+  ProgramOptions,
 } from 'ogl'
 
 import vertex from '~/shaders/collidable/vertex.glsl'
@@ -14,10 +15,9 @@ import fragment from '~/shaders/collidable/fragment.glsl'
 const WIDTH = 1
 const HEIGHT = 1
 
-export interface StaticPlaneParams {
+export interface StaticPlaneParams extends Partial<ProgramOptions> {
   camera: Camera
   resolution: Vec2
-  transparent?: boolean
   texture?: string
 }
 
@@ -30,14 +30,14 @@ export default class StaticPlane extends Mesh {
 
   constructor(
     gl,
-    { texture, camera, resolution, transparent }: StaticPlaneParams,
+    { texture, camera, resolution, ...params }: StaticPlaneParams,
   ) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
+        ...params,
         vertex,
         fragment,
-        transparent,
         uniforms: {
           uTexture: {
             value: TextureLoader.load(gl, {

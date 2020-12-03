@@ -30,7 +30,6 @@ export function newGUITransform(name: string, object: Transform, parent = gui) {
 }
 
 const tmp_vec_3 = new Vec3()
-const tmp_vec_32 = new Vec3()
 export function newGUIScreenTransform(
   name: string,
   object: Transform,
@@ -57,7 +56,7 @@ export function newGUIScreenTransform(
       right: 0,
       bottom: 0,
     },
-    size: (1 / size.x) * 0.5,
+    size: 1 / size.x,
   }
 
   const onChange = () => {
@@ -68,18 +67,22 @@ export function newGUIScreenTransform(
       camera,
       tmp.position,
       resolution,
-      object.position,
+      tmp_vec_3,
     )
+    tmp_vec_3.z = object.position.z
+    object.position.copy(tmp_vec_3)
     ;(object as any)._initial?.copy(object.position)
+    console.log(tmp_vec_3)
+    object.updateMatrixWorld()
 
     // compute object size to fit in viewport
-    getWorldMatrix(object, tmp_vec_32)
-    getScaleFromCameraDistance(camera, tmp_vec_32, tmp_vec_32)
+    getWorldMatrix(object, tmp_vec_3)
+    getScaleFromCameraDistance(camera, tmp_vec_3, tmp_vec_3)
 
     object.scale.set(
-      tmp.size * tmp_vec_32.x,
-      tmp.size * tmp_vec_32.x,
-      tmp.size * tmp_vec_32.x,
+      tmp.size * tmp_vec_3.x,
+      tmp.size * tmp_vec_3.x,
+      tmp.size * tmp_vec_3.x,
     )
   }
 
@@ -87,6 +90,7 @@ export function newGUIScreenTransform(
 
   c.add(tmp.position, 'top').step(0.1).onChange(onChange)
   c.add(tmp.position, 'left').step(0.1).onChange(onChange)
+  c.add(object.position, 'z', -2, 2, 0.01).listen()
   c.add(tmp.position, 'right').step(0.1).onChange(onChange)
   c.add(tmp.position, 'bottom').step(0.1).onChange(onChange)
 

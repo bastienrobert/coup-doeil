@@ -1,8 +1,10 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
+import RaycastableMesh from '../core/RaycastableMesh'
 
 export interface Scene extends Transform {
   name: string
   resize?: () => void
+  raycastable?: RaycastableMesh[]
   onBeforeEnter?: () => Promise<void>
   onEnter?: () => Promise<void>
   onBeforeLeave?: () => Promise<void>
@@ -23,6 +25,7 @@ export interface SceneParams {
 export default class SceneController extends Transform {
   scenes: Scene[]
   name: string
+  raycastable: RaycastableMesh[]
   _current: Scene
 
   constructor(scenes: Scene[], first?: string) {
@@ -34,6 +37,7 @@ export default class SceneController extends Transform {
       s.visible = false
     })
 
+    this.raycastable = []
     if (first) this.set(first)
   }
 
@@ -60,6 +64,7 @@ export default class SceneController extends Transform {
     // HIDE PREVIOUS SCENE
     if (previous) {
       if (previous.onBeforeLeave) await previous.onBeforeLeave()
+      this.raycastable = []
       previous.visible = false
       if (previous.onLeave) await previous.onLeave()
       if (next?.resize) next.resize()
@@ -69,6 +74,7 @@ export default class SceneController extends Transform {
     if (next) {
       if (next.onBeforeEnter) await next.onBeforeEnter()
       next.visible = true
+      if (next.raycastable) this.raycastable = next.raycastable
       if (next.onEnter) await next.onEnter()
     }
 

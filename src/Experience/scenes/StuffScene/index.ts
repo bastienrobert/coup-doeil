@@ -4,8 +4,6 @@ import { Scene, SceneParams } from '../../controllers/SceneController'
 
 import RaycastableMesh from '../../core/RaycastableMesh'
 
-import DynamicPlane from '../../meshes/DynamicPlane'
-
 import Background from './objects/Background'
 import Floor from './objects/Floor'
 import TopLeftShelf from './groups/TopLeftShelf'
@@ -18,14 +16,12 @@ import gui from '../../gui'
 
 export default class StuffScene extends Transform implements Scene {
   name = 'stuff'
+  raycastable: RaycastableMesh[]
 
   _gl: OGLRenderingContext
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
-  _raycastable: RaycastableMesh[]
-
-  _dynamic: DynamicPlane
 
   _background: Background
   _floor: Floor
@@ -43,7 +39,7 @@ export default class StuffScene extends Transform implements Scene {
     this._resolution = resolution
     this._mouse = mouse
     this._camera = camera
-    // this._raycastable = raycastable
+    this.raycastable = []
 
     this._background = new Background(gl, { camera, resolution })
     this.addChild(this._background)
@@ -51,7 +47,7 @@ export default class StuffScene extends Transform implements Scene {
     this._floor = new Floor(gl, { camera, resolution })
     this.addChild(this._floor)
 
-    this._topLeftShelf = new TopLeftShelf(gl, { camera, resolution })
+    this._topLeftShelf = new TopLeftShelf(gl, { camera, resolution, mouse })
     this.addChild(this._topLeftShelf)
 
     this._middleShelf = new MiddleShelf(gl, { camera, resolution })
@@ -66,18 +62,21 @@ export default class StuffScene extends Transform implements Scene {
     this._topRightShelf = new TopRightShelf(gl, { camera, resolution })
     this.addChild(this._topRightShelf)
 
-    // this._raycastable.push(this._dynamic)
-    // this.addChild(this._dynamic)
+    this.raycastable.push(...this._topLeftShelf.raycastables)
 
     this._initGUI()
   }
 
   onMouseDown = () => {
-    // if (this._dynamic.isHit) this._dynamic.isDown.copy(this._mouse)
+    this.raycastable.forEach((m) => {
+      if (m.isHit) m.isDown.copy(this._mouse)
+    })
   }
 
   onMouseUp = () => {
-    // this._dynamic.isDown.z = 0
+    this.raycastable.forEach((m) => {
+      m.isDown.z = 0
+    })
   }
 
   resize = () => {
@@ -93,6 +92,7 @@ export default class StuffScene extends Transform implements Scene {
 
   update = (t) => {
     // this._dynamic.update(t)
+    this._topLeftShelf.update(t)
   }
 
   _initGUI() {

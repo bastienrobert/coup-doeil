@@ -19,6 +19,7 @@ export default class Floor extends StaticPlane {
     super(gl, {
       texture: floor,
       camera,
+      depthWrite: false,
       resolution,
     })
     this.rotation.x = -Math.PI / 3

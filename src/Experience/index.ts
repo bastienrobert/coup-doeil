@@ -44,7 +44,6 @@ export default class Experience extends Transform {
   _mouse: Vec3
   _mouseNorm: Vec3
   _raycast: Raycast
-  _raycastable: RaycastableMesh[]
 
   _spot: Spot
   _planes: Planes
@@ -69,7 +68,6 @@ export default class Experience extends Transform {
     this._mouseNorm = new Vec3(-1000)
 
     this._raycast = new Raycast(this._gl)
-    this._raycastable = []
 
     this._scenes = new SceneController(
       [
@@ -145,7 +143,7 @@ export default class Experience extends Transform {
       this._mouseNorm,
     )
     if (!IS_TOUCHABLE) {
-      this.rotation.set(this._mouseNorm.y * 0.1, this._mouseNorm.x * 0.1, 0)
+      this.rotation.set(this._mouseNorm.y * 0.05, this._mouseNorm.x * 0.05, 0)
     }
     this._scenes.onMouseMove()
   }
@@ -205,10 +203,15 @@ export default class Experience extends Transform {
     this._controls.update()
     this._spot.update(time)
 
-    this._raycastable.forEach((mesh: RaycastableMesh) => (mesh.isHit = false))
+    this._scenes.raycastable.forEach((mesh: RaycastableMesh) => {
+      mesh.isHit = false
+    })
     this._raycast.castMouse(this._camera, this._mouseNorm)
-    const hits = this._raycast.intersectBounds(this._raycastable)
-    hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
+    const hits = this._raycast.intersectBounds(this._scenes.raycastable)
+    hits.forEach((mesh: RaycastableMesh, i) => {
+      mesh.isHit = i === 0
+    })
+    // hits.forEach((mesh: RaycastableMesh) => (mesh.isHit = true))
 
     this._scenes.update(time)
 
