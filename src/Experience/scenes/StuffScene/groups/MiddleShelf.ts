@@ -5,12 +5,12 @@ import RaycastableMesh, {
   RaycastableGroup,
 } from '~/Experience/core/RaycastableMesh'
 import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
-import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
+import { DynamicPlaneParamsWithColliderCallback } from '~/Experience/meshes/DynamicPlane'
 import middleShelf from '~/assets/textures/stuffs/middleShelf.png'
 
-import Bottle from '../objects/Bottle'
-import Swat from '../objects/Swat'
-import Bulb from '../objects/Bulb'
+import Bottle from '~/Experience/objects/Bottle'
+import Swat from '~/Experience/objects/Swat'
+import Bulb from '~/Experience/objects/Bulb'
 
 import {
   getScaleFromCameraDistance,
@@ -37,7 +37,15 @@ export default class MiddleShelf
   _swat: Swat
   _bulb: Bulb
 
-  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
+  constructor(
+    gl,
+    {
+      camera,
+      resolution,
+      mouse,
+      onCollide,
+    }: DynamicPlaneParamsWithColliderCallback,
+  ) {
     super()
 
     this._camera = camera
@@ -50,6 +58,7 @@ export default class MiddleShelf
       camera,
       resolution,
       depthWrite: false,
+      depthTest: false,
       transparent: true,
     })
     this.addChild(this._background)
@@ -58,6 +67,8 @@ export default class MiddleShelf
       texture: middleShelf,
       camera,
       mouse,
+      positionOnScreen: { top: 53, left: 54 },
+      sizeOnScreen: 0.3,
       resolution,
       transparent: true,
     })
@@ -68,8 +79,11 @@ export default class MiddleShelf
       texture: middleShelf,
       camera,
       mouse,
+      positionOnScreen: { top: 52, left: 65 },
+      sizeOnScreen: 0.3,
       resolution,
       transparent: true,
+      onCollide,
     })
     this._swat.name = 'swat'
     this.addChild(this._swat)
@@ -78,8 +92,11 @@ export default class MiddleShelf
       texture: middleShelf,
       camera,
       mouse,
+      positionOnScreen: { top: 63, left: 60 },
+      sizeOnScreen: 0.12,
       resolution,
       transparent: true,
+      onCollide,
     })
     this._bulb.name = 'bulb'
     this.addChild(this._bulb)

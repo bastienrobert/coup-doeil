@@ -1,4 +1,6 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
+
+import Game from '../Game'
 import RaycastableMesh from '../core/RaycastableMesh'
 
 export interface Scene extends Transform {
@@ -19,7 +21,7 @@ export interface SceneParams {
   camera?: Camera
   resolution?: Vec2
   mouse?: Vec3
-  mouseNorm?: Vec3
+  game?: Game
 }
 
 export default class SceneController extends Transform {

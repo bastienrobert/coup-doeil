@@ -13,11 +13,11 @@ import Stats from 'stats.js'
 
 import RaycastableMesh from './core/RaycastableMesh'
 
+import Game from './Game'
 import SceneController from './controllers/SceneController'
 import IntroScene from './scenes/IntroScene'
 import StuffScene from './scenes/StuffScene'
 
-import Planes from './groups/Planes'
 import gui from './gui'
 
 import { getResolutionNormalizedCoords } from '~/utils/maths'
@@ -36,6 +36,7 @@ export default class Experience extends Transform {
   _gl: OGLRenderingContext
   _rafID: number
 
+  _game: Game
   _scenes: SceneController
   _camera: Camera
   _controls: Orbit
@@ -46,7 +47,6 @@ export default class Experience extends Transform {
   _raycast: Raycast
 
   _spot: Spot
-  _planes: Planes
 
   constructor(renderer: Renderer) {
     super()
@@ -54,6 +54,16 @@ export default class Experience extends Transform {
     this.renderer = renderer
     this._gl = renderer.gl
     this._gl.clearColor(1, 1, 1, 1)
+
+    this._game = new Game(
+      [
+        {
+          name: 'stuff',
+          objects: ['boot', 'bulb', 'clock', 'gears', 'swat'],
+        },
+      ],
+      'stuff',
+    )
 
     this._camera = new Camera(this._gl)
     this._camera.position.set(0, 0, 10)
@@ -73,6 +83,7 @@ export default class Experience extends Transform {
       [
         new IntroScene(),
         new StuffScene(this._gl, {
+          game: this._game,
           mouse: this._mouseNorm,
           camera: this._camera,
           resolution: this._resolution,
@@ -94,7 +105,7 @@ export default class Experience extends Transform {
     this._spot = new Spot(this._gl, {
       resolution: this._resolution,
     })
-    // this._post.addPass(this._spot)
+    this._post.addPass(this._spot)
   }
 
   _listen() {

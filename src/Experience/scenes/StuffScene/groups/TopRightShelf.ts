@@ -5,12 +5,12 @@ import RaycastableMesh, {
   RaycastableGroup,
 } from '~/Experience/core/RaycastableMesh'
 import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
-import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
+import { DynamicPlaneParamsWithColliderCallback } from '~/Experience/meshes/DynamicPlane'
 import topRightShelf from '~/assets/textures/stuffs/topRightShelf.png'
 
-import Bolt from '../objects/Bolt'
-import Clock from '../objects/Clock'
-import Pan from '../objects/Pan'
+import Bolt from '~/Experience/objects/Bolt'
+import Clock from '~/Experience/objects/Clock'
+import Pan from '~/Experience/objects/Pan'
 
 import {
   getScaleFromCameraDistance,
@@ -37,7 +37,15 @@ export default class TopRightShelf
   _bolt: Bolt
   _pan: Pan
 
-  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
+  constructor(
+    gl,
+    {
+      camera,
+      resolution,
+      mouse,
+      onCollide,
+    }: DynamicPlaneParamsWithColliderCallback,
+  ) {
     super()
 
     this.raycastables = []
@@ -54,14 +62,18 @@ export default class TopRightShelf
       resolution,
       transparent: true,
     })
+    this._background.renderOrder = 0
     this.addChild(this._background)
 
     this._clock = new Clock(gl, {
       texture: topRightShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.1,
+      positionOnScreen: { top: 30, left: 80 },
       resolution,
       transparent: true,
+      onCollide,
     })
     this._clock.name = 'clock'
     this.addChild(this._clock)
@@ -70,6 +82,8 @@ export default class TopRightShelf
       texture: topRightShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.1,
+      positionOnScreen: { top: 25, left: 85 },
       resolution,
       transparent: true,
     })
@@ -80,6 +94,8 @@ export default class TopRightShelf
       texture: topRightShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.15,
+      positionOnScreen: { top: 30, left: 90 },
       resolution,
       transparent: true,
     })

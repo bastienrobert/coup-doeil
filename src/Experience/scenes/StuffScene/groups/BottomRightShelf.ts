@@ -5,11 +5,11 @@ import RaycastableMesh, {
   RaycastableGroup,
 } from '~/Experience/core/RaycastableMesh'
 import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
-import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
+import { DynamicPlaneParamsWithColliderCallback } from '~/Experience/meshes/DynamicPlane'
 import bottomRightShelf from '~/assets/textures/stuffs/bottomRightShelf.png'
 
-import Gears from '../objects/Gears'
-import PurpleBall from '../objects/PurpleBall'
+import Gears from '~/Experience/objects/Gears'
+import PurpleBall from '~/Experience/objects/PurpleBall'
 
 import {
   getScaleFromCameraDistance,
@@ -35,7 +35,15 @@ export default class BottomRightShelf
   _gears: Gears
   _purpleBall: PurpleBall
 
-  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
+  constructor(
+    gl,
+    {
+      camera,
+      resolution,
+      mouse,
+      onCollide,
+    }: DynamicPlaneParamsWithColliderCallback,
+  ) {
     super()
 
     this.raycastables = []
@@ -55,19 +63,22 @@ export default class BottomRightShelf
     this.addChild(this._background)
 
     this._gears = new Gears(gl, {
-      texture: bottomRightShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.12,
+      positionOnScreen: { top: 65, left: 85 },
       resolution,
       transparent: true,
+      onCollide,
     })
     this._gears.name = 'gears'
     this.addChild(this._gears)
 
     this._purpleBall = new PurpleBall(gl, {
-      texture: bottomRightShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.12,
+      positionOnScreen: { top: 63, left: 79 },
       resolution,
       transparent: true,
     })

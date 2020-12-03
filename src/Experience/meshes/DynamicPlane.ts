@@ -10,6 +10,7 @@ import {
 } from 'ogl'
 
 import RaycastableMesh from '../core/RaycastableMesh'
+import { OnCollideParams } from '../core/CollidableMesh'
 
 import vertex from '~/shaders/dynamic/vertex.glsl'
 import fragment from '~/shaders/dynamic/fragment.glsl'
@@ -32,7 +33,13 @@ export interface DynamicPlaneParams extends Partial<ProgramOptions> {
   texture?: string
   transparent?: boolean
   positionOnScreen?: Rect
+  sizeOnScreen?: number
   zOnDown?: number
+}
+
+export interface DynamicPlaneParamsWithColliderCallback
+  extends DynamicPlaneParams {
+  onCollide?: OnCollideParams
 }
 
 const tmp_vec_3 = new Vec3()
@@ -55,6 +62,7 @@ export default class DynamicPlane extends RaycastableMesh {
   _mouse: Vec3
   _moved: boolean
   _positionOnScreen: Rect
+  _sizeOnScreen: number
   _positionOnDown: Vec3
   _camera: Camera
   _mouseHandler: MouseOffsetHandler
@@ -77,6 +85,7 @@ export default class DynamicPlane extends RaycastableMesh {
       texture,
       transparent,
       positionOnScreen,
+      sizeOnScreen,
       zOnDown = 1,
       ...program
     }: DynamicPlaneParams,
@@ -101,6 +110,8 @@ export default class DynamicPlane extends RaycastableMesh {
       }),
     })
 
+    this.renderOrder = 999
+
     this._gl = gl
 
     this.initial = new Vec3()
@@ -108,6 +119,7 @@ export default class DynamicPlane extends RaycastableMesh {
     this._resolution = resolution
     this._positionOnDown = new Vec3()
     this._positionOnScreen = positionOnScreen
+    this._sizeOnScreen = sizeOnScreen
     this._camera = camera
     this._zOnDown = zOnDown
 
@@ -204,6 +216,13 @@ export default class DynamicPlane extends RaycastableMesh {
     if (!this._moved) {
       this.position.copy(this.initial)
     }
+  }
+
+  resetSize() {
+    getWorldMatrix(this, tmp_vec_3)
+    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
+    this.scale.set(tmp_vec_3.x)
+    if (this._sizeOnScreen) this.scale.multiply(this._sizeOnScreen)
   }
 
   reset() {

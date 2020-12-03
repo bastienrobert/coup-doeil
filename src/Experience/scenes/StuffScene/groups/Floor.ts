@@ -4,11 +4,11 @@ import StaticPlane from '~/Experience/meshes/StaticPlane'
 import { CollidablePlaneParams } from '~/Experience/meshes/CollidablePlane'
 import floor from '~/assets/textures/stuffs/floor.png'
 
-import Bulb from '../objects/BulbShadow'
-import Clock from '../objects/ClockShadow'
-import Swat from '../objects/SwatShadow'
-import Gears from '../objects/GearsShadow'
-import Boot from '../objects/BootShadow'
+import Bulb from '~/Experience/objects/BulbShadow'
+import Clock from '~/Experience/objects/ClockShadow'
+import Swat from '~/Experience/objects/SwatShadow'
+import Gears from '~/Experience/objects/GearsShadow'
+import Boot from '~/Experience/objects/BootShadow'
 
 import {
   getScaleFromCameraDistance,

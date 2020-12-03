@@ -7,10 +7,10 @@ import RaycastableMesh, {
 import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import bottomLeftShelf from '~/assets/textures/stuffs/bottomLeftShelf.png'
 
-import RedBall from '../objects/RedBall'
-import Keys from '../objects/Keys'
-import Sextoy from '../objects/Sextoy'
-import Bat from '../objects/Bat'
+import RedBall from '~/Experience/objects/RedBall'
+import Keys from '~/Experience/objects/Keys'
+import Sextoy from '~/Experience/objects/Sextoy'
+import Bat from '~/Experience/objects/Bat'
 
 import {
   getScaleFromCameraDistance,
@@ -61,6 +61,8 @@ export default class BottomLeftShelf
       texture: bottomLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.1,
+      positionOnScreen: { top: 57, left: 5 },
       resolution,
       transparent: true,
     })
@@ -71,6 +73,8 @@ export default class BottomLeftShelf
       texture: bottomLeftShelf,
       camera,
       mouse,
+      positionOnScreen: { top: 57, left: 15 },
+      sizeOnScreen: 0.2,
       resolution,
       transparent: true,
     })
@@ -81,6 +85,8 @@ export default class BottomLeftShelf
       texture: bottomLeftShelf,
       camera,
       mouse,
+      positionOnScreen: { top: 62, left: 28 },
+      sizeOnScreen: 0.24,
       resolution,
       transparent: true,
     })
@@ -91,6 +97,8 @@ export default class BottomLeftShelf
       texture: bottomLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.1,
+      positionOnScreen: { top: 65, left: 35 },
       resolution,
       transparent: true,
     })

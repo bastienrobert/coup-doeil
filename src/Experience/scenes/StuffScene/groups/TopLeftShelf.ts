@@ -5,14 +5,14 @@ import RaycastableMesh, {
   RaycastableGroup,
 } from '~/Experience/core/RaycastableMesh'
 import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
-import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
+import { DynamicPlaneParamsWithColliderCallback } from '~/Experience/meshes/DynamicPlane'
 import topLeftShelf from '~/assets/textures/stuffs/topLeftShelf.png'
 
-import Boot from '../objects/Boot'
-import Bone from '../objects/Bone'
-import GreenBall from '../objects/GreenBall'
-import Fork from '../objects/Fork'
-import RedRectangle from '../objects/RedRectangle'
+import Boot from '~/Experience/objects/Boot'
+import Bone from '~/Experience/objects/Bone'
+import GreenBall from '~/Experience/objects/GreenBall'
+import Fork from '~/Experience/objects/Fork'
+import RedRectangle from '~/Experience/objects/RedRectangle'
 
 import {
   getScaleFromCameraDistance,
@@ -42,7 +42,15 @@ export default class TopLeftShelf
   _fork: Fork
   _redRectangle: RedRectangle
 
-  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
+  constructor(
+    gl,
+    {
+      camera,
+      resolution,
+      mouse,
+      onCollide,
+    }: DynamicPlaneParamsWithColliderCallback,
+  ) {
     super()
 
     this._camera = camera
@@ -72,8 +80,11 @@ export default class TopLeftShelf
       texture: topLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.15,
+      positionOnScreen: { top: 35, left: 6 },
       resolution,
       transparent: true,
+      onCollide,
     })
     this._boot.name = 'boot'
     this.addChild(this._boot)
@@ -82,6 +93,8 @@ export default class TopLeftShelf
       texture: topLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.12,
+      positionOnScreen: { top: 35, left: 18 },
       resolution,
       transparent: true,
     })
@@ -92,6 +105,8 @@ export default class TopLeftShelf
       texture: topLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.15,
+      positionOnScreen: { top: 32, left: 33 },
       resolution,
       transparent: true,
     })
@@ -102,6 +117,8 @@ export default class TopLeftShelf
       texture: topLeftShelf,
       camera,
       mouse,
+      sizeOnScreen: 0.1,
+      positionOnScreen: { top: 38, left: 24 },
       resolution,
       transparent: true,
     })
