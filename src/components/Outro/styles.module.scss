@@ -1,7 +1,9 @@
-.Intro {
+.Outro {
   background: #EF5A44;
   min-height: 100vh;
+  position:relative;
   color: #FDF4E9;
+  z-index:99;
 }
 
 .h1{
@@ -28,5 +30,28 @@
 .p{
   font-family: 'Gilam Black';
   font-size:2em;
+  font-weight: 600;
+  line-height: 1.2em;
+  letter-spacing: 0.01em;
 
+}
+
+@media only screen and (max-device-width : 600px){
+  .h1{
+    padding-top:4rem;
+    font-size:1.8em;
+  }
+  .h2{
+    font-size: 5.8em;
+  }
+  .grandma{
+    max-height:40Vmin;
+    margin-top:-15Vmin;
+  }
+  .dog{
+    position:absolute;
+    max-height: 10Vmin;
+    margin-left:15Vmin;
+    margin-top:-8Vmin;
+  }
 }

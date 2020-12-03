@@ -1,8 +1,9 @@
 .Intro {
   background: #FDF4E9;
-  width:100vw;
-  height: 100vh;
+  position: relative;
+  min-height: 100vh;
   color: #F75D45;
+  z-index:999;
 }
 
 .h1{
@@ -35,12 +36,40 @@
   margin-top:-15Vmin;
 }
 
+.dogMove{
+  position:absolute;
+  max-height: 19Vmin;
+  margin-left:25Vmin;
+  margin-top:-15Vmin;
+  transition: transform 600ms ease-in-out;
+  transform: scale(4) translateY(50%) translateX(-50%);
+}
+
+.disable{
+  visibility:hidden;
+}
+
+.arrowR{
+  position:absolute;
+  right:0;
+  bottom:0;
+  padding:50px 55px
+}
+
+.arrowL{
+  position:absolute;
+  right:0;
+  bottom:0;
+  padding:50px 9%
+}
+
 .p{
   font-family: 'Gilam Black';
   font-weight: 200;
   font-size: calc(11px + 2vmin);
   padding-top:1.8rem;
 }
+
 
 @media only screen and (max-device-width : 900px){
   .h1{
@@ -51,7 +80,22 @@
     font-size: 7.8em;
   }
   .grandma{
-    margin-top:-24Vmin;
+    margin-top:-15Vmin;
+    max-height:40Vmin;
+  }
+}
+
+@media only screen and (max-device-width : 750px){
+  .h1{
+    padding-top:4rem;
+    font-size:2.5em;
+  }
+  .h2{
+    font-size: 7.8em;
+  }
+  .grandma{
+    margin-top:-16Vmin;
+    max-height:40Vmin;
   }
 }
 
@@ -65,6 +109,13 @@
     font-size: 5.8em;
   }
   .grandma{
-    margin-top:-20Vmin;
+    max-height:40Vmin;
+    margin-top:-15Vmin;
+  }
+  .dog{
+    position:absolute;
+    max-height: 10Vmin;
+    margin-left:15Vmin;
+    margin-top:-8Vmin;
   }
 }

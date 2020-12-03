@@ -1,27 +1,63 @@
 import { h } from 'preact'
-import { Howl, Howler } from 'howler';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+
+import grandma from '~/assets/img/grandma.png'
+import arrowL from '~/assets/img/arrowLeft.svg'
+import arrowR from '~/assets/img/arrowRight.svg'
+import dog from '~/assets/img/dog_intro.png'
+
+import { intro } from '~/sounds'
 
 import css from './styles.module.scss'
 
-import grandma from '~/assets/img/grandma.png'
-import dog from '~/assets/img/dog_intro.png'
-
 export default function Intro() {
 
-  const sound = new Howl({
-    src: ['/sounds/intro.mp3'],
-    autoplay: false,
-    volume: 0.5
-  });
+  const isPlaying = useRef(false)
+  const [pclass, setPclass] = useState(css.p);
+  const [dogclass, setDogClass] = useState(css.dog);
+  const [isEnd, setIsEnd] = useState(false);
+  const [grandmaclass, setGrandmaClass] = useState(css.grandma);
+  const [arrowLclass, setarrowLclass] = useState(css.disable);
+  const [arrowRclass, setarrowRclass] = useState(css.disable);
+  const [spoutnikclass, setspoutnikclass] = useState(css.disable);
 
+  const onEnd = useCallback(() => {
+    setIsEnd(true)
+  }, [])
+
+  const onClick = useCallback(() => {
+    if (!isPlaying.current) {
+      isPlaying.current = true
+      intro.play()
+      intro.on('end', onEnd)
+      setPclass(css.disable)
+      // setGrandmaClass(css.disable)
+      // setDogClass(css.dogMove)
+    }
+
+    return () => {
+      intro.off('end', onEnd)
+
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isEnd) {
+      setarrowRclass(css.arrowR)
+      setarrowLclass(css.arrowL)
+    }
+  }, [isEnd])
 
   return (
-    <div className={css.Intro}>
+    <div className={css.Intro} onClick={onClick}>
       <h1 className={css.h1}>mamie</h1>
-      <img className={css.dog} src={dog} />
+      <img className={dogclass} src={dog} />
       <h2 className={css.h2}>coco</h2>
-      <img className={css.grandma} src={grandma} />
-      <p className={css.p}>Clic pour commencer</p>
+      <img className={grandmaclass} src={grandma} />
+      <p className={pclass} >Clique pour commencer</p>
+      <img className={arrowLclass} src={arrowL} />
+      <img className={arrowRclass} src={arrowR} />
+      <p className={spoutnikclass} >Remonter Spoutnik</p>
     </div>
   )
 }
