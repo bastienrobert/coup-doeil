@@ -40,3 +40,47 @@
     transform: scale(1.06);
   }
 }
+
+@font-face {
+  font-family: 'Gilam Black';
+  font-weight: 700;
+  src: url('/fonts/Gilam/Gilam-Black.eot');
+  src: url('/fonts/Gilam/Gilam-Black.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/Gilam/Gilam-Black.woff2') format('woff2'),
+    url('/fonts/Gilam/Gilam-Black.woff') format('woff'),
+    url('/fonts/Gilam/Gilam-Black.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Gilam';
+  font-weight: 200;
+  src: url('/fonts/Gilam/Gilam-ThinItalic.eot');
+  src: url('/fonts/Gilam/Gilam-ThinItalic.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/Gilam/Gilam-ThinItalic.woff2') format('woff2'),
+    url('/fonts/Gilam/Gilam-ThinItalic.woff') format('woff'),
+    url('/fonts/Gilam/Gilam-ThinItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Mak';
+  font-weight: 900;
+  src: url('/fonts/Mak/Mak-Bold.eot');
+  src: url('/fonts/Mak/Mak-Bold.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/Mak/Mak-Bold.woff2') format('woff2'),
+    url('/fonts/Mak/Mak-Bold.woff') format('woff'),
+    url('/fonts/Mak/Mak-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Mak';
+  font-weight: 400;
+  src: url('/fonts/Mak/Mak.eot');
+  src: url('/fonts/Mak/Mak.eot?#iefix')
+      format('embedded-opentype'),
+    url('/fonts/Mak/Mak.woff2') format('woff2'),
+    url('/fonts/Mak/Mak.woff') format('woff'),
+    url('/fonts/Mak/Mak.ttf') format('truetype');
+}
