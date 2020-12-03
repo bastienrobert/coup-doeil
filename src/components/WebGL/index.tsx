@@ -21,6 +21,7 @@ export default function WebGL() {
   useEffect(() => {
     rendererRef.current = new Renderer({
       canvas: canvasRef.current,
+      // dpr: 2
     })
     experienceRef.current = new Experience(rendererRef.current)
 

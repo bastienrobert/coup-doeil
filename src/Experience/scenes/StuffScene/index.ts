@@ -5,7 +5,7 @@ import { Scene, SceneParams } from '../../controllers/SceneController'
 import RaycastableMesh from '../../core/RaycastableMesh'
 
 import Background from './objects/Background'
-import Floor from './objects/Floor'
+import Floor from './groups/Floor'
 import TopLeftShelf from './groups/TopLeftShelf'
 import TopRightShelf from './groups/TopRightShelf'
 import MiddleShelf from './groups/MiddleShelf'

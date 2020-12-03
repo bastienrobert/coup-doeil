@@ -1,6 +1,7 @@
 import { Vec3 } from 'ogl'
+
 import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
-import floor from '~/assets/textures/stuffs/floor.png'
+import bat from '~/assets/textures/stuffs/bat.png'
 
 import {
   getScaleFromCameraDistance,
@@ -10,18 +11,17 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 80, left: 50 }
-const SIZE = 1.2
+const POSITION = { top: 62, left: 28 }
+const SIZE = 0.24
 
-export default class Floor extends StaticPlane {
+export default class Bat extends StaticPlane {
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super(gl, {
-      texture: floor,
+      transparent: true,
+      texture: bat,
       camera,
-      depthWrite: false,
       resolution,
     })
-    this.rotation.x = -Math.PI / 3
   }
 
   resize = () => {
@@ -32,8 +32,9 @@ export default class Floor extends StaticPlane {
       tmp_vec_3,
     )
     this.position.copy(tmp_vec_3)
+    this.rotation.set(0, 0, -Math.PI / 2)
+    this.position.z = 0.4
     getWorldMatrix(this, tmp_vec_3)
-    // tmp_vec_3.z = 0
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)
     this.scale.multiply(SIZE)

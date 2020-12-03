@@ -3,6 +3,10 @@ import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
 import topRightShelf from '~/assets/textures/stuffs/topRightShelf.png'
 
+import Bolt from '../objects/Bolt'
+import Clock from '../objects/Clock'
+import Pan from '../objects/Pan'
+
 import {
   getScaleFromCameraDistance,
   getWorldMatrix,
@@ -19,6 +23,10 @@ export default class TopRightShelf extends Transform {
   _camera: Camera
   _resolution: Vec2
 
+  _clock: Clock
+  _bolt: Bolt
+  _pan: Pan
+
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super()
 
@@ -28,10 +36,36 @@ export default class TopRightShelf extends Transform {
     this._background = new StaticPlane(gl, {
       texture: topRightShelf,
       camera,
+      depthWrite: false,
+      depthTest: false,
       resolution,
       transparent: true,
     })
     this.addChild(this._background)
+
+    this._clock = new Clock(gl, {
+      texture: topRightShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._clock)
+
+    this._bolt = new Bolt(gl, {
+      texture: topRightShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._bolt)
+
+    this._pan = new Pan(gl, {
+      texture: topRightShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._pan)
   }
 
   resize = () => {
@@ -47,5 +81,9 @@ export default class TopRightShelf extends Transform {
     this._background.scale.set(tmp_vec_3.x)
     this._background.scale.multiply(BG_SIZE)
     this._background.position.z = 0.5
+
+    this._pan.resize()
+    this._bolt.resize()
+    this._clock.resize()
   }
 }

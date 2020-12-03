@@ -7,6 +7,9 @@ import topLeftShelf from '~/assets/textures/stuffs/topLeftShelf.png'
 
 import Boot from '../objects/Boot'
 import Bone from '../objects/Bone'
+import GreenBall from '../objects/GreenBall'
+import Fork from '../objects/Fork'
+import RedRectangle from '../objects/RedRectangle'
 
 import {
   getScaleFromCameraDistance,
@@ -29,6 +32,9 @@ export default class TopLeftShelf extends Transform {
 
   _boot: Boot
   _bone: Bone
+  _greenBall: GreenBall
+  _fork: Fork
+  _redRectangle: RedRectangle
 
   constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
@@ -40,10 +46,20 @@ export default class TopLeftShelf extends Transform {
     this._background = new StaticPlane(gl, {
       texture: topLeftShelf,
       camera,
+      depthWrite: false,
+      depthTest: false,
       resolution,
       transparent: true,
     })
     this.addChild(this._background)
+
+    this._redRectangle = new RedRectangle(gl, {
+      texture: topLeftShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._redRectangle)
 
     this._boot = new Boot(gl, {
       texture: topLeftShelf,
@@ -63,10 +79,26 @@ export default class TopLeftShelf extends Transform {
     })
     this.addChild(this._bone)
 
-    this.raycastables.push(this._boot, this._bone)
+    this._fork = new Fork(gl, {
+      texture: topLeftShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._fork)
 
-    this._initGUI()
+    this._greenBall = new GreenBall(gl, {
+      texture: topLeftShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._greenBall)
+
+    this.raycastables.push(this._boot, this._bone)
   }
+
+
 
   resize = () => {
     getWorldPositionFromViewportRectPerc(
@@ -80,10 +112,13 @@ export default class TopLeftShelf extends Transform {
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this._background.scale.set(tmp_vec_3.x)
     this._background.scale.multiply(BG_SIZE)
-    this._background.position.z = 0.1
+    this._background.position.z = 0.05
 
     this._boot.resize()
     this._bone.resize()
+    this._greenBall.resize()
+    this._fork.resize()
+    this._redRectangle.resize()
   }
 
   update(t) {

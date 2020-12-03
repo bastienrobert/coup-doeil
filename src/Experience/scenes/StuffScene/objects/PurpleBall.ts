@@ -1,6 +1,7 @@
 import { Vec3 } from 'ogl'
+
 import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
-import floor from '~/assets/textures/stuffs/floor.png'
+import purpleBall from '~/assets/textures/stuffs/purple_ball.png'
 
 import {
   getScaleFromCameraDistance,
@@ -10,18 +11,17 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 80, left: 50 }
-const SIZE = 1.2
+const POSITION = { top: 63, left: 79 }
+const SIZE = 0.12
 
-export default class Floor extends StaticPlane {
+export default class PurpleBall extends StaticPlane {
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super(gl, {
-      texture: floor,
+      transparent: true,
+      texture: purpleBall,
       camera,
-      depthWrite: false,
       resolution,
     })
-    this.rotation.x = -Math.PI / 3
   }
 
   resize = () => {
@@ -32,8 +32,8 @@ export default class Floor extends StaticPlane {
       tmp_vec_3,
     )
     this.position.copy(tmp_vec_3)
+    this.position.z = 0.7
     getWorldMatrix(this, tmp_vec_3)
-    // tmp_vec_3.z = 0
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)
     this.scale.multiply(SIZE)

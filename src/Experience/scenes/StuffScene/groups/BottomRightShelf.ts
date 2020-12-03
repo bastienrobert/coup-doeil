@@ -3,6 +3,9 @@ import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
 import bottomRightShelf from '~/assets/textures/stuffs/bottomRightShelf.png'
 
+import Gears from '../objects/Gears'
+import PurpleBall from '../objects/PurpleBall'
+
 import {
   getScaleFromCameraDistance,
   getWorldMatrix,
@@ -19,6 +22,9 @@ export default class BottomRightShelf extends Transform {
   _camera: Camera
   _resolution: Vec2
 
+  _gears: Gears
+  _purpleBall: PurpleBall
+
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super()
 
@@ -29,9 +35,28 @@ export default class BottomRightShelf extends Transform {
       texture: bottomRightShelf,
       camera,
       resolution,
+      depthWrite: false,
+      depthTest: false,
       transparent: true,
     })
     this.addChild(this._background)
+
+    this._gears = new Gears(gl, {
+      texture: bottomRightShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._gears)
+
+    this._purpleBall = new PurpleBall(gl, {
+      texture: bottomRightShelf,
+      camera,
+      resolution,
+      transparent: true,
+    })
+    this.addChild(this._purpleBall)
+
   }
 
   resize = () => {
@@ -48,5 +73,8 @@ export default class BottomRightShelf extends Transform {
     this._background.scale.set(tmp_vec_3.x)
     this._background.scale.multiply(BG_SIZE)
     this._background.position.z = 0.4
+
+    this._gears.resize()
+    this._purpleBall.resize()
   }
 }
