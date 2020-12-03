@@ -1,6 +1,11 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import RaycastableMesh, {
+  RaycastableGroup,
+} from '~/Experience/core/RaycastableMesh'
+import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
+import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import middleShelf from '~/assets/textures/stuffs/middleShelf.png'
 
 import Bottle from '../objects/Bottle'
@@ -18,7 +23,12 @@ const tmp_vec_3 = new Vec3()
 const BG_POSITION = { top: 40, left: 60 }
 const BG_SIZE = 0.6
 
-export default class MiddleShelf extends Transform {
+export default class MiddleShelf
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
+  raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
+
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -27,11 +37,13 @@ export default class MiddleShelf extends Transform {
   _swat: Swat
   _bulb: Bulb
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
 
     this._camera = camera
     this._resolution = resolution
+    this.raycastables = []
+    this.colliders = []
 
     this._background = new StaticPlane(gl, {
       texture: middleShelf,
@@ -45,26 +57,35 @@ export default class MiddleShelf extends Transform {
     this._bottle = new Bottle(gl, {
       texture: middleShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._bottle.name = 'bottle'
     this.addChild(this._bottle)
 
     this._swat = new Swat(gl, {
       texture: middleShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._swat.name = 'swat'
     this.addChild(this._swat)
 
     this._bulb = new Bulb(gl, {
       texture: middleShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._bulb.name = 'bulb'
     this.addChild(this._bulb)
+
+    this.raycastables.push(this._bottle, this._swat, this._bulb)
+    this.colliders.push(this._swat, this._bulb)
   }
 
   resize = () => {
@@ -84,5 +105,11 @@ export default class MiddleShelf extends Transform {
     this._bottle.resize()
     this._swat.resize()
     this._bulb.resize()
+  }
+
+  update(t) {
+    this._bottle.update(t)
+    this._swat.update(t)
+    this._bulb.update(t)
   }
 }

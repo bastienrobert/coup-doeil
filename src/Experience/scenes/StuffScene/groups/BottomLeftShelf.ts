@@ -1,6 +1,10 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import RaycastableMesh, {
+  RaycastableGroup,
+} from '~/Experience/core/RaycastableMesh'
+import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import bottomLeftShelf from '~/assets/textures/stuffs/bottomLeftShelf.png'
 
 import RedBall from '../objects/RedBall'
@@ -13,13 +17,19 @@ import {
   getWorldMatrix,
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
+import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
 
 const tmp_vec_3 = new Vec3()
 
 const BG_POSITION = { top: 55, left: 25 }
 const BG_SIZE = 0.5
 
-export default class BottomLeftShelf extends Transform {
+export default class BottomLeftShelf
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
+  raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
+
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -29,11 +39,13 @@ export default class BottomLeftShelf extends Transform {
   _sextoy: Sextoy
   _bat: Bat
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
 
     this._camera = camera
     this._resolution = resolution
+    this.raycastables = []
+    this.colliders = []
 
     this._background = new StaticPlane(gl, {
       texture: bottomLeftShelf,
@@ -48,34 +60,45 @@ export default class BottomLeftShelf extends Transform {
     this._redBall = new RedBall(gl, {
       texture: bottomLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._redBall.name = 'redBall'
     this.addChild(this._redBall)
 
     this._sextoy = new Sextoy(gl, {
       texture: bottomLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._sextoy.name = 'sextoy'
     this.addChild(this._sextoy)
 
     this._bat = new Bat(gl, {
       texture: bottomLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._bat.name = 'bat'
     this.addChild(this._bat)
 
     this._keys = new Keys(gl, {
       texture: bottomLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._keys.name = 'keys'
     this.addChild(this._keys)
+
+    this.raycastables.push(this._redBall, this._sextoy, this._bat, this._keys)
+    this.colliders.push(this._redBall, this._sextoy, this._keys)
   }
 
   resize = () => {
@@ -96,5 +119,12 @@ export default class BottomLeftShelf extends Transform {
     this._keys.resize()
     this._sextoy.resize()
     this._bat.resize()
+  }
+
+  update(t) {
+    this._redBall.update(t)
+    this._keys.update(t)
+    this._sextoy.update(t)
+    this._bat.update(t)
   }
 }

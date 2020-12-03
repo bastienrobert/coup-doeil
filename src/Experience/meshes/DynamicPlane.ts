@@ -22,7 +22,7 @@ import {
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
 import { mouseOffsetHandler, MouseOffsetHandler } from '~/utils/handler'
-import spring, { Spring } from '~/utils/spring'
+import spring, { InrtiaConfig, Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
 
 export interface DynamicPlaneParams extends Partial<ProgramOptions> {
@@ -59,6 +59,7 @@ export default class DynamicPlane extends RaycastableMesh {
   _camera: Camera
   _mouseHandler: MouseOffsetHandler
   _mouseSpring: Spring
+  _scaleSpring: Spring
   _positionSpring: Spring
   _timestamp: Timestamp
   _zOnDown: number
@@ -118,6 +119,13 @@ export default class DynamicPlane extends RaycastableMesh {
       value: new Vec3(),
       config: UP_CONFIG,
     })
+    this._scaleSpring = spring({
+      value: 1,
+      config: {
+        friction: 30,
+        rigidity: 0.25,
+      },
+    })
 
     this._timestamp = timestamp()
     this._mouseHandler = mouseOffsetHandler(this._mouseHandlerCallback)
@@ -138,10 +146,17 @@ export default class DynamicPlane extends RaycastableMesh {
     return HEIGHT * 0.5 * this.scale.y
   }
 
+  hide = () => {
+    this._scaleSpring.set({
+      value: 0,
+    })
+  }
+
   _computeBoundingBox() {
     this.geometry.computeBoundingBox()
-    this.geometry.bounds.max.z = 0.5
-    this.geometry.bounds.min.z = -0.5
+    // this.geometry.bounds.max.z = 0.5
+    // this.geometry.bounds.min.z = -0.5
+    this.geometry.bounds.max.z = 1
   }
 
   _isOutViewport() {
@@ -191,10 +206,27 @@ export default class DynamicPlane extends RaycastableMesh {
     }
   }
 
+  reset() {
+    this.isDown.z = 0
+    this.moveTo([this.initial.x, this.initial.y, this.position.z], DOWN_CONFIG)
+  }
+
+  moveTo(position: Vec3 | number[], config: InrtiaConfig = DOWN_CONFIG) {
+    this._positionSpring.set({
+      value: position,
+      config,
+    })
+    this._mouseSpring.inrtia.value.set(this._mouse.x, this._mouse.y)
+    this.updateMatrixWorld()
+  }
+
   update(t: number) {
     this._timestamp.update(t * 1000)
     this._mouseSpring.update(this._timestamp.delta)
     this._positionSpring.update(this._timestamp.delta)
+    this._scaleSpring.update(this._timestamp.delta)
+
+    this.scale.multiply(this._scaleSpring.inrtia.value)
 
     if (this.isDown.z && !this.wasDown) {
       this._mouseSpring.inrtia.value.set(this._mouse.x, this._mouse.y)
@@ -225,12 +257,8 @@ export default class DynamicPlane extends RaycastableMesh {
     }
 
     if (this._isOutViewport()) {
-      this._positionSpring.set({
-        value: [this.initial.x, this.initial.y],
-        config: DOWN_CONFIG,
-      })
-      this.updateMatrixWorld()
-    } else {
+      this.reset()
+    } else if (this._positionSpring.inrtia.stopped) {
       this._positionSpring.inrtia.value.copy(this.position)
     }
 

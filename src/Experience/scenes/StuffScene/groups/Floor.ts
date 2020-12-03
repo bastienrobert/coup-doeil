@@ -1,6 +1,7 @@
-import { Bounds, Camera, Transform, Vec2, Vec3 } from 'ogl'
+import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import { CollidablePlaneParams } from '~/Experience/meshes/CollidablePlane'
 import floor from '~/assets/textures/stuffs/floor.png'
 
 import Bulb from '../objects/BulbShadow'
@@ -14,11 +15,16 @@ import {
   getWorldMatrix,
   getWorldPositionFromViewportRectPerc,
 } from '~/utils/maths'
+import { OnCollideParams } from '~/Experience/core/CollidableMesh'
 
 const tmp_vec_3 = new Vec3()
 
 const BG_POSITION = { top: 80, right: 50 }
 const BG_SIZE = 1.2
+
+interface FloorParams extends CollidablePlaneParams {
+  onCollide?: OnCollideParams
+}
 
 export default class Floor extends Transform {
   _background: StaticPlane
@@ -31,7 +37,7 @@ export default class Floor extends Transform {
   _swat: Swat
   _boot: Boot
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, colliders, onCollide }: FloorParams) {
     super()
 
     this._camera = camera
@@ -48,46 +54,56 @@ export default class Floor extends Transform {
     this._clock = new Clock(gl, {
       texture: floor,
       camera,
+      colliders,
+      onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.renderOrder = 999
+    this._clock.name = 'clockShadow'
     this.addChild(this._clock)
 
     this._gears = new Gears(gl, {
       texture: floor,
       camera,
+      colliders,
+      onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.renderOrder = 999
+    this._gears.name = 'gearsShadow'
     this.addChild(this._gears)
 
     this._boot = new Boot(gl, {
       texture: floor,
       camera,
+      colliders,
+      onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.renderOrder = 999
+    this._boot.name = 'bootShadow'
     this.addChild(this._boot)
 
     this._swat = new Swat(gl, {
       texture: floor,
       camera,
+      colliders,
+      onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.renderOrder = 999
+    this._swat.name = 'swatShadow'
     this.addChild(this._swat)
 
     this._bulb = new Bulb(gl, {
       texture: floor,
       camera,
+      colliders,
+      onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.renderOrder = 999
+    this._bulb.name = 'bulbShadow'
     this.addChild(this._bulb)
   }
 
@@ -112,5 +128,13 @@ export default class Floor extends Transform {
     this._gears.resize()
     this._bulb.resize()
     this._clock.resize()
+  }
+
+  update = () => {
+    this._swat.update()
+    this._boot.update()
+    this._gears.update()
+    this._bulb.update()
+    this._clock.update()
   }
 }

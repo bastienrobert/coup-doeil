@@ -109,7 +109,6 @@ export default class Spot implements Pass {
       uTime: { value: 0 },
       uColor: { value: new Color(0.3, 0.2, 0.5) },
     }
-    ;(window as any).transite = this.transite
   }
 
   setSide(side: SpotSide) {

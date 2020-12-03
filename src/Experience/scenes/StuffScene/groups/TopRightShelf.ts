@@ -1,6 +1,11 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import RaycastableMesh, {
+  RaycastableGroup,
+} from '~/Experience/core/RaycastableMesh'
+import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
+import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import topRightShelf from '~/assets/textures/stuffs/topRightShelf.png'
 
 import Bolt from '../objects/Bolt'
@@ -18,7 +23,12 @@ const tmp_vec_3 = new Vec3()
 const BG_POSITION = { top: 20, right: 10 }
 const BG_SIZE = 0.35
 
-export default class TopRightShelf extends Transform {
+export default class TopRightShelf
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
+  raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
+
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -27,8 +37,11 @@ export default class TopRightShelf extends Transform {
   _bolt: Bolt
   _pan: Pan
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
+
+    this.raycastables = []
+    this.colliders = []
 
     this._camera = camera
     this._resolution = resolution
@@ -46,26 +59,35 @@ export default class TopRightShelf extends Transform {
     this._clock = new Clock(gl, {
       texture: topRightShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._clock.name = 'clock'
     this.addChild(this._clock)
 
     this._bolt = new Bolt(gl, {
       texture: topRightShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._bolt.name = 'bolt'
     this.addChild(this._bolt)
 
     this._pan = new Pan(gl, {
       texture: topRightShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._pan.name = 'pan'
     this.addChild(this._pan)
+
+    this.raycastables.push(this._clock, this._bolt, this._pan)
+    this.colliders.push(this._clock, this._bolt, this._pan)
   }
 
   resize = () => {
@@ -85,5 +107,11 @@ export default class TopRightShelf extends Transform {
     this._pan.resize()
     this._bolt.resize()
     this._clock.resize()
+  }
+
+  update(t) {
+    this._pan.update(t)
+    this._bolt.update(t)
+    this._clock.update(t)
   }
 }

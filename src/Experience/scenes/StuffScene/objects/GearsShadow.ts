@@ -1,6 +1,8 @@
 import { Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '~/Experience/meshes/CollidablePlane'
 import gearsShadow from '~/assets/textures/stuffs/gears_shadow.png'
 
 import {
@@ -14,13 +16,13 @@ const tmp_vec_3 = new Vec3()
 const POSITION = { top: 70, left: 25 }
 const SIZE = 0.09
 
-export default class GearsShadow extends StaticPlane {
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+export default class GearsShadow extends CollidablePlane {
+  constructor(gl, params: CollidablePlaneParams) {
     super(gl, {
+      ...params,
       transparent: true,
       texture: gearsShadow,
-      camera,
-      resolution,
+      depthTest: false,
     })
   }
 

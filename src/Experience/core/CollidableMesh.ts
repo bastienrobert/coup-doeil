@@ -1,15 +1,18 @@
-import { Bounds, Mesh, MeshOptions, OGLRenderingContext, Vec3 } from 'ogl'
+import { Mesh, MeshOptions, OGLRenderingContext } from 'ogl'
+
+export type OnCollideParams = (from: string, on: string) => void
+
+export interface ColliderGroup {
+  colliders: ColliderMesh[]
+  onCollide?: OnCollideParams
+}
+
+export interface ColliderMesh extends Mesh {
+  isInCollision: (mesh: Mesh) => void
+  onCollide?: OnCollideParams
+}
 
 export default class CollidableMesh extends Mesh {
-  isCollide = false
-  bounds: Bounds = {
-    min: new Vec3(),
-    max: new Vec3(),
-    center: new Vec3(),
-    scale: new Vec3(),
-    radius: Infinity,
-  }
-
   constructor(gl: OGLRenderingContext, options: Partial<MeshOptions>) {
     super(gl, options)
     this.geometry.computeBoundingBox()

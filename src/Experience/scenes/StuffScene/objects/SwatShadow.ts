@@ -1,6 +1,8 @@
 import { Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '~/Experience/meshes/CollidablePlane'
 import swatShadow from '~/assets/textures/stuffs/swat_shadow.png'
 
 import {
@@ -11,16 +13,16 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 70, left: 55 }
+const POSITION = { top: 70, left: 15 }
 const SIZE = 0.09
 
-export default class SwatShadow extends StaticPlane {
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+export default class SwatShadow extends CollidablePlane {
+  constructor(gl, params: CollidablePlaneParams) {
     super(gl, {
+      ...params,
       transparent: true,
       texture: swatShadow,
-      camera,
-      resolution,
+      depthTest: false,
     })
   }
 

@@ -1,7 +1,10 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
 import StaticPlane from '~/Experience/meshes/StaticPlane'
-import RaycastableMesh from '~/Experience/core/RaycastableMesh'
+import RaycastableMesh, {
+  RaycastableGroup,
+} from '~/Experience/core/RaycastableMesh'
+import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
 import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import topLeftShelf from '~/assets/textures/stuffs/topLeftShelf.png'
 
@@ -23,8 +26,11 @@ const tmp_vec_3 = new Vec3()
 const BG_POSITION = { top: 30, left: 7 }
 const BG_SIZE = 0.7
 
-export default class TopLeftShelf extends Transform {
+export default class TopLeftShelf
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
   raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
 
   _background: StaticPlane
   _camera: Camera
@@ -42,6 +48,7 @@ export default class TopLeftShelf extends Transform {
     this._camera = camera
     this._resolution = resolution
     this.raycastables = []
+    this.colliders = []
 
     this._background = new StaticPlane(gl, {
       texture: topLeftShelf,
@@ -68,6 +75,7 @@ export default class TopLeftShelf extends Transform {
       resolution,
       transparent: true,
     })
+    this._boot.name = 'boot'
     this.addChild(this._boot)
 
     this._bone = new Bone(gl, {
@@ -77,28 +85,32 @@ export default class TopLeftShelf extends Transform {
       resolution,
       transparent: true,
     })
+    this._bone.name = 'bone'
     this.addChild(this._bone)
 
     this._fork = new Fork(gl, {
       texture: topLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._fork.name = 'fork'
     this.addChild(this._fork)
 
     this._greenBall = new GreenBall(gl, {
       texture: topLeftShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._greenBall.name = 'greenBall'
     this.addChild(this._greenBall)
 
-    this.raycastables.push(this._boot, this._bone)
+    this.raycastables.push(this._boot, this._bone, this._fork, this._greenBall)
+    this.colliders.push(this._boot, this._bone, this._fork, this._greenBall)
   }
-
-
 
   resize = () => {
     getWorldPositionFromViewportRectPerc(
@@ -124,6 +136,8 @@ export default class TopLeftShelf extends Transform {
   update(t) {
     this._boot.update(t)
     this._bone.update(t)
+    this._greenBall.update(t)
+    this._fork.update(t)
   }
 
   _initGUI() {

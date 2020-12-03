@@ -1,6 +1,8 @@
 import { Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import CollidablePlane, {
+  CollidablePlaneParams,
+} from '~/Experience/meshes/CollidablePlane'
 import clockShadow from '~/assets/textures/stuffs/clock_shadow.png'
 
 import {
@@ -14,13 +16,13 @@ const tmp_vec_3 = new Vec3()
 const POSITION = { bottom: 30, left: 45 }
 const SIZE = 0.1
 
-export default class ClocKShadow extends StaticPlane {
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+export default class ClockShadow extends CollidablePlane {
+  constructor(gl, params: CollidablePlaneParams) {
     super(gl, {
+      ...params,
       transparent: true,
       texture: clockShadow,
-      camera,
-      resolution,
+      depthTest: false,
     })
   }
 

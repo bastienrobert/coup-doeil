@@ -1,8 +1,10 @@
-import { Vec3 } from 'ogl'
+import { Mesh, Vec3 } from 'ogl'
 
 import DynamicPlane, {
   DynamicPlaneParams,
 } from '~/Experience/meshes/DynamicPlane'
+import { ColliderMesh } from '~/Experience/core/CollidableMesh'
+
 import boot from '~/assets/textures/stuffs/boot.png'
 
 import { getScaleFromCameraDistance, getWorldMatrix } from '~/utils/maths'
@@ -12,7 +14,7 @@ const tmp_vec_3 = new Vec3()
 const POSITION = { top: 35, left: 6 }
 const SIZE = 0.15
 
-export default class Boot extends DynamicPlane {
+export default class Boot extends DynamicPlane implements ColliderMesh {
   constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super(gl, {
       transparent: true,
@@ -25,6 +27,15 @@ export default class Boot extends DynamicPlane {
       camera,
       resolution,
     })
+  }
+
+  isInCollision(mesh: Mesh) {
+    if (mesh.name === 'bootShadow') {
+      this.moveTo(mesh.position)
+      setTimeout(() => {
+        this.hide()
+      }, 200)
+    }
   }
 
   resize = () => {

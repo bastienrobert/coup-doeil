@@ -1,4 +1,4 @@
-import { Bounds, Camera, Color, Mesh, Transform, Vec2, Vec3 } from 'ogl'
+import { Camera, Mesh, Transform, Vec2, Vec3 } from 'ogl'
 
 import CollidableMesh from '../core/CollidableMesh'
 import CollidablePlane, {
@@ -22,7 +22,7 @@ interface PlanesParams extends Omit<CollidablePlaneParams, 'color'> {
 }
 
 const tmp_vec_3 = new Vec3()
-const tmp_bound = box()
+const tmp_bounds = box()
 
 export default class Planes extends Transform {
   _camera: Camera
@@ -101,11 +101,11 @@ export default class Planes extends Transform {
     applyMatrix4(this.beta.bounds, this.beta.worldMatrix)
 
     this._collidable.forEach((mesh: Mesh) => {
-      cloneBox(mesh.geometry.bounds, tmp_bound)
-      applyMatrix4(tmp_bound, mesh.worldMatrix)
+      cloneBox(mesh.geometry.bounds, tmp_bounds)
+      applyMatrix4(tmp_bounds, mesh.worldMatrix)
 
       this._colliders.forEach((m: CollidableMesh) => {
-        m.isCollide = getIsIntersectedBoundingBox(m.bounds, tmp_bound)
+        getIsIntersectedBoundingBox(m.bounds, tmp_bounds)
       })
     })
   }

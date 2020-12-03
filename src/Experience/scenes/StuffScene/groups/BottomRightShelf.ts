@@ -1,6 +1,11 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
-import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
+import StaticPlane from '~/Experience/meshes/StaticPlane'
+import RaycastableMesh, {
+  RaycastableGroup,
+} from '~/Experience/core/RaycastableMesh'
+import { ColliderGroup, ColliderMesh } from '~/Experience/core/CollidableMesh'
+import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import bottomRightShelf from '~/assets/textures/stuffs/bottomRightShelf.png'
 
 import Gears from '../objects/Gears'
@@ -17,7 +22,12 @@ const tmp_vec_3 = new Vec3()
 const BG_POSITION = { top: 60, right: 17 }
 const BG_SIZE = 0.25
 
-export default class BottomRightShelf extends Transform {
+export default class BottomRightShelf
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
+  raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
+
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -25,8 +35,11 @@ export default class BottomRightShelf extends Transform {
   _gears: Gears
   _purpleBall: PurpleBall
 
-  constructor(gl, { camera, resolution }: StaticPlaneParams) {
+  constructor(gl, { camera, resolution, mouse }: DynamicPlaneParams) {
     super()
+
+    this.raycastables = []
+    this.colliders = []
 
     this._camera = camera
     this._resolution = resolution
@@ -44,19 +57,25 @@ export default class BottomRightShelf extends Transform {
     this._gears = new Gears(gl, {
       texture: bottomRightShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._gears.name = 'gears'
     this.addChild(this._gears)
 
     this._purpleBall = new PurpleBall(gl, {
       texture: bottomRightShelf,
       camera,
+      mouse,
       resolution,
       transparent: true,
     })
+    this._purpleBall.name = 'purpleBall'
     this.addChild(this._purpleBall)
 
+    this.raycastables.push(this._gears, this._purpleBall)
+    this.colliders.push(this._gears, this._purpleBall)
   }
 
   resize = () => {
@@ -76,5 +95,10 @@ export default class BottomRightShelf extends Transform {
 
     this._gears.resize()
     this._purpleBall.resize()
+  }
+
+  update(t) {
+    this._gears.update(t)
+    this._purpleBall.update(t)
   }
 }
