@@ -46,14 +46,10 @@ export default class Spot implements Pass {
       uResolution: { value: resolution },
       uLeftEnable: { value: 1 },
       uRightEnable: { value: 1 },
-      uTextureLeftAlphaPosition: { value: new Vec2(10, 10) },
-      uTextureLeftAlphaScale: { value: 0.2 },
-      uTextureLeftAlphaDimension: { value: new Vec2(2048, 2048) },
+      uTextureDimension: { value: new Vec2(1024, 1024) },
       uTime: { value: 0 },
       uColor: { value: new Color(0.3, 0.2, 0.5) },
     }
-
-    // this._initGUI()
   }
 
   setSide(side: SpotSide) {
@@ -80,14 +76,4 @@ export default class Spot implements Pass {
   update = (t: number) => {
     this.uniforms.uTime.value = t
   }
-
-  // _initGUI() {
-  //   gui.add(this.uniforms.uTextureLeftAlphaScale, 'value').step(.1) // prettier-ignore
-  //   const textureLeftAlphaPositionC = gui.addFolder('textureLeftAlphaPosition') // prettier-ignore
-  //   textureLeftAlphaPositionC.add(this.uniforms.uTextureLeftAlphaPosition.value, 'x') // prettier-ignore
-  //   textureLeftAlphaPositionC.add(this.uniforms.uTextureLeftAlphaPosition.value, 'y') // prettier-ignore
-  //   const textureLeftAlphaDimensionC = gui.addFolder('textureLeftAlphaDimension') // prettier-ignore
-  //   textureLeftAlphaDimensionC.add(this.uniforms.uTextureLeftAlphaDimension.value, 'x') // prettier-ignore
-  //   textureLeftAlphaDimensionC.add(this.uniforms.uTextureLeftAlphaDimension.value, 'y') // prettier-ignore
-  // }
 }

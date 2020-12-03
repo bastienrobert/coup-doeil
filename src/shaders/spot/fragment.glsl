@@ -8,9 +8,7 @@ uniform float uNormalUVScale;
 uniform vec3 uColor;
 uniform vec2 uResolution;
 
-uniform vec2 uTextureLeftAlphaPosition;
-uniform float uTextureLeftAlphaScale;
-uniform vec2 uTextureLeftAlphaDimension;
+uniform vec2 uTextureDimension;
 
 uniform sampler2D tLeft;
 uniform sampler2D tRight;
@@ -33,38 +31,37 @@ vec2 contain(vec2 r, float s, vec2 i) {
   return (vUv * r) / new + offset;
 }
 
-float frame(vec2 c, vec2 r, vec2 p) {
-  return ((1. - step(c.x/r.x, p.x)) * (1. - step(1. - c.y/r.y, p.y)));
-}
-
-void main() {  
-  vec2 p1 = vec2(
-    texValue(vec2(0., 1.)),
-    texValue(vec2(.2, 1.))
+vec4 tex(vec2 i, vec2 xy, sampler2D tex, vec2 d) {
+  float a = uResolution.x / uResolution.y;
+  vec2 rp = vec2(
+    texValue(vec2((i.x + 0.)/6. + 1./12., i.y)),
+    texValue(vec2((i.x + 1.)/6. + 1./12., i.y))
   );
-  float s = texValue(vec2(.5, 1.)) * .1;
+  float s = texValue(vec2((i.x + 2.)/6. + 1./12., i.y)) * .1;
 
   // texture position
-  float a = uResolution.x / uResolution.y;
-  vec2 p = vec2(
-    -p1.x * .1 / s,
-    p1.y * .1 / (s * a)
-  );
+  vec2 p = vec2(-rp.x * .1 / s, rp.y * .1 / (s * a));
 
   // texture contain
-  float aLeft = texture2D(tLeft, contain(
-    uResolution,
-    s,
-    uTextureLeftAlphaDimension
-  ) + p).r;
+  return texture2D(tex, contain(uResolution, s, d) + p);
+}
 
+void main() {
+  float a = uResolution.x / uResolution.y;
+  vec2 xy = vec2(6., 1.);
 
-  float cltLeft = frame(gl_FragCoord.xy, uResolution, p1 * .1) * aLeft;
+  float aLeft1 = tex(vec2(0., 1.), xy, tLeft, uTextureDimension).r;
+  float aLeft2 = tex(vec2(1. * 3., 1.), xy, tLeft, uTextureDimension).g;
+  float aLeft = smoothstep(.2, 1., (aLeft1 + aLeft2));
+
+  float aRight1 = tex(vec2(0., 0.), xy, tRight, uTextureDimension).r;
+  float aRight2 = tex(vec2(1. * 3., 0.), xy, tRight, uTextureDimension).g;
+  float aRight = smoothstep(.2, 1., (aRight1 + aRight2));
   
   vec4 spot = vec4(vec3(
-    cltLeft
+    (aLeft * uLeftEnable)
+    + (aRight * uRightEnable)
   ), 1.);
 
-  // gl_FragColor = texture2D(tData, vUv);
   gl_FragColor = (1. - spot) * texture2D(tMap, vUv);
 }

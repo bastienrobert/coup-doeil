@@ -68,22 +68,10 @@ export default class SpotData extends Texture {
   _populate(coords: SpotDataCoords[], offset: number = 0) {
     coords.forEach((c, i) => {
       const i2 = i * 4 * 3 + offset
-      const x = valueToColor(c.x * 10)
-      const y = valueToColor(c.y * 10)
-      const s = valueToColor(c.s * 10)
 
-      this.image[i2] = x[0]
-      this.image[1 + i2] = x[1]
-      this.image[2 + i2] = x[2]
-      this.image[3 + i2] = x[3]
-      this.image[4 + i2] = y[0]
-      this.image[5 + i2] = y[1]
-      this.image[6 + i2] = y[2]
-      this.image[7 + i2] = y[3]
-      this.image[8 + i2] = s[0]
-      this.image[9 + i2] = s[1]
-      this.image[10 + i2] = s[2]
-      this.image[11 + i2] = s[3]
+      this._setPixelValue(i2, c.x * 10)
+      this._setPixelValue(i2 + 4, c.y * 10)
+      this._setPixelValue(i2 + 8, c.s * 1000)
     })
   }
 
@@ -99,6 +87,20 @@ export default class SpotData extends Texture {
     this.needsUpdate = true
 
     this._initGUI(data)
+  }
+
+  _getPixelValue(p: number) {
+    return (
+      this.image[p] + this.image[p + 1] + this.image[p + 2] + this.image[p + 3]
+    )
+  }
+
+  _setPixelValue(p: number, value: number) {
+    const rv = valueToColor(value)
+    this.image[p] = rv[0]
+    this.image[p + 1] = rv[1]
+    this.image[p + 2] = rv[2]
+    this.image[p + 3] = rv[3]
   }
 
   _initGUI(data: SpotDataData) {
@@ -117,27 +119,28 @@ export default class SpotData extends Texture {
         const c = main.addFolder(`spot-${i}`)
         const i2 = i * 4 * 3
 
-        const tmp = { foo: 0 }
+        const xg = i2 + o
+        const yg = i2 + o + 4
+        const sg = i2 + o + 8
 
-        const x = c.addFolder('x')
-        // x.add(tmp, 'foo', 0, 100, 0.1).onChange((v) => {
-        //   const rv = Math.round(v * 10)
-        //   console.log(rv)
-        // })
-        x.add(this.image, i2 + o + '').onChange(onChange)
-        x.add(this.image, i2 + o + 1 + '').onChange(onChange)
-        x.add(this.image, i2 + o + 2 + '').onChange(onChange)
-        x.add(this.image, i2 + o + 3 + '').onChange(onChange)
-        const y = c.addFolder('y')
-        y.add(this.image, i2 + o + 4 + '').onChange(onChange)
-        y.add(this.image, i2 + o + 5 + '').onChange(onChange)
-        y.add(this.image, i2 + o + 6 + '').onChange(onChange)
-        y.add(this.image, i2 + o + 7 + '').onChange(onChange)
-        const s = c.addFolder('s')
-        s.add(this.image, i2 + o + 8 + '').onChange(onChange)
-        s.add(this.image, i2 + o + 9 + '').onChange(onChange)
-        s.add(this.image, i2 + o + 10 + '').onChange(onChange)
-        s.add(this.image, i2 + o + 11 + '').onChange(onChange)
+        const tmp = {
+          x: this._getPixelValue(xg) * 0.1,
+          y: this._getPixelValue(yg) * 0.1,
+          s: this._getPixelValue(sg) * 0.001,
+        }
+
+        c.add(tmp, 'x', 0, 100, 0.1).onChange((v) => {
+          this._setPixelValue(xg, v * 10)
+          onChange()
+        })
+        c.add(tmp, 'y', 0, 100, 0.1).onChange((v) => {
+          this._setPixelValue(yg, v * 10)
+          onChange()
+        })
+        c.add(tmp, 's', 0, 1, 0.001).onChange((v) => {
+          this._setPixelValue(sg, v * 1000)
+          onChange()
+        })
       }
     }
 
