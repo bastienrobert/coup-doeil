@@ -1,4 +1,11 @@
-import { Color, TextureLoader, Vec2, Pass, OGLRenderingContext } from 'ogl'
+import {
+  Color,
+  TextureLoader,
+  Vec2,
+  Pass,
+  OGLRenderingContext,
+  Vec4,
+} from 'ogl'
 
 import spotLeft from '~/assets/textures/spotLeft.png'
 import spotRight from '~/assets/textures/spotRight.png'
@@ -11,6 +18,17 @@ import SpotData from './SpotData'
 import spring, { Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
 
+const tmp_vec_4 = new Vec4()
+
+const TRANSITE_IN = {
+  friction: 12,
+  rigidity: 0.25,
+}
+const TRANSITE_OUT = {
+  friction: 50,
+  rigidity: 0.1,
+}
+
 interface SpotParams {
   resolution: Vec2
 }
@@ -21,6 +39,8 @@ export default class Spot implements Pass {
   _gl: OGLRenderingContext
   _resolution: Vec2
   _spring: Spring
+  _transiting: boolean
+  _transition: Spring
   _timestamp: Timestamp
 
   fragment: string
@@ -35,9 +55,29 @@ export default class Spot implements Pass {
         left: 1,
         right: 1,
       },
-      callback: ({ left, right }: any) => {
+      callback: ({ left, right, transition }: any) => {
         this.uniforms.uLeftEnable.value = left
         this.uniforms.uRightEnable.value = right
+      },
+    })
+    this._transition = spring({
+      value: new Vec4(0, 0, 0, 0),
+      config: {
+        perfectStop: true,
+        precisionStop: 0.01,
+      },
+      callback: (value: Vec4) => {
+        this.uniforms.uMask.value.copy(value)
+
+        if (tmp_vec_4.w === value.w && value.w === 1 && this._transiting) {
+          this._transiting = false
+          setTimeout(() => {
+            this._transition.set({
+              config: TRANSITE_OUT,
+              value: tmp_vec_4.set(1, 1, 1, 0),
+            })
+          }, 600)
+        }
       },
     })
 
@@ -62,12 +102,14 @@ export default class Spot implements Pass {
         value: new SpotData(this._gl, spots.intro),
       },
       uResolution: { value: resolution },
+      uMask: { value: new Vec4(1, 1, 1, 0) },
       uLeftEnable: { value: 1 },
       uRightEnable: { value: 1 },
       uTextureDimension: { value: new Vec2(1024, 1024) },
       uTime: { value: 0 },
       uColor: { value: new Color(0.3, 0.2, 0.5) },
     }
+    ;(window as any).transite = this.transite
   }
 
   setSide(side: SpotSide) {
@@ -99,6 +141,17 @@ export default class Spot implements Pass {
     }
   }
 
+  transite = (color: 'WHITE' | 'BLACK') => {
+    this._transiting = true
+    this._transition.set({
+      config: TRANSITE_IN,
+      value:
+        color === 'WHITE'
+          ? tmp_vec_4.set(1, 1, 1, 1)
+          : tmp_vec_4.set(0, 0, 0, 1),
+    })
+  }
+
   resize = () => {
     this._resolution.set(this._resolution.x, this._resolution.y)
   }
@@ -106,6 +159,7 @@ export default class Spot implements Pass {
   update = (t: number) => {
     this._timestamp.update(t * 1000)
     this._spring.update(this._timestamp.delta)
+    this._transition.update(this._timestamp.delta)
     this.uniforms.uTime.value = t
   }
 }
