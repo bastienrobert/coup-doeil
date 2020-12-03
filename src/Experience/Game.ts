@@ -7,6 +7,7 @@ interface StageParams {
 
 class Stage {
   name: string
+  won: boolean
   _values: { [key: string]: boolean }
 
   constructor(params: StageParams) {
@@ -53,6 +54,8 @@ export default class Game {
   }
 
   win() {
+    if (this.current.won) return
+    this.current.won = true
     console.log('GOTO NEXT STAGE')
   }
 }
