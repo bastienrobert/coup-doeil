@@ -80,7 +80,7 @@ export default class Experience extends Transform {
           resolution: this._resolution,
         }),
       ],
-      'intro',
+      'stuff',
     )
     this.addChild(this._scenes)
 
@@ -145,7 +145,7 @@ export default class Experience extends Transform {
       this._mouseNorm,
     )
     if (!IS_TOUCHABLE) {
-      this.rotation.set(this._mouseNorm.x * 0.1, this._mouseNorm.y * 0.1, 0)
+      this.rotation.set(this._mouseNorm.y * 0.1, this._mouseNorm.x * 0.1, 0)
     }
     this._scenes.onMouseMove()
   }
@@ -192,9 +192,9 @@ export default class Experience extends Transform {
       aspect: this._resolution.x / this._resolution.y,
     })
     this._camera.updateMatrixWorld()
+
     this._post.resize()
     this._spot.resize()
-
     this._scenes.resize()
   }
 

@@ -18,6 +18,7 @@ const HEIGHT = 1
 export interface CollidablePlaneParams {
   camera: Camera
   resolution: Vec2
+  transparent?: boolean
   texture?: string
 }
 
@@ -28,12 +29,16 @@ export default class CollidablePlane extends CollidableMesh {
 
   isCollide: boolean
 
-  constructor(gl, { texture, camera, resolution }: CollidablePlaneParams) {
+  constructor(
+    gl,
+    { texture, camera, resolution, transparent }: CollidablePlaneParams,
+  ) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
         vertex,
         fragment,
+        transparent,
         uniforms: {
           uTexture: {
             value: TextureLoader.load(gl, {

@@ -14,7 +14,7 @@ const tmp_vec_3 = new Vec3()
 const POSITION = { top: 80, left: 50 }
 const SIZE = 1.2
 
-export default class TopLeftShelf extends StaticPlane {
+export default class Floor extends StaticPlane {
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super(gl, {
       texture: floor,
@@ -29,11 +29,13 @@ export default class TopLeftShelf extends StaticPlane {
       this._camera,
       POSITION,
       this._resolution,
-      this.position,
+      tmp_vec_3,
     )
+    this.position.copy(tmp_vec_3)
     getWorldMatrix(this, tmp_vec_3)
     // tmp_vec_3.z = 0
-    getScaleFromCameraDistance(this._camera, tmp_vec_3, this.scale)
+    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
+    this.scale.set(tmp_vec_3.x)
     this.scale.multiply(SIZE)
   }
 }

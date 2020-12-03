@@ -29,6 +29,7 @@ interface DynamicPlaneParams {
   resolution: Vec2
   camera: Camera
   texture?: string
+  transparent?: boolean
   positionOnScreen?: Rect
 }
 
@@ -70,6 +71,7 @@ export default class DynamicPlane extends RaycastableMesh {
       camera,
       resolution,
       texture,
+      transparent,
       positionOnScreen,
     }: DynamicPlaneParams,
   ) {
@@ -78,6 +80,7 @@ export default class DynamicPlane extends RaycastableMesh {
       program: new Program(gl, {
         vertex,
         fragment,
+        transparent,
         uniforms: {
           uTexture: {
             value: TextureLoader.load(gl, {

@@ -1,7 +1,7 @@
 import { Vec3 } from 'ogl'
 
 import StaticPlane, { StaticPlaneParams } from '~/Experience/meshes/StaticPlane'
-import background from '~/assets/textures/stuffs/background.png'
+import bone from '~/assets/textures/stuffs/bone.png'
 
 import {
   getScaleFromCameraDistance,
@@ -11,13 +11,14 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 50, left: 50 }
-const SIZE = 1.2
+const POSITION = { top: 30, left: 20 }
+const SIZE = 0.15
 
-export default class Background extends StaticPlane {
+export default class Bone extends StaticPlane {
   constructor(gl, { camera, resolution }: StaticPlaneParams) {
     super(gl, {
-      texture: background,
+      transparent: true,
+      texture: bone,
       camera,
       resolution,
     })
@@ -28,11 +29,13 @@ export default class Background extends StaticPlane {
       this._camera,
       POSITION,
       this._resolution,
-      this.position,
+      tmp_vec_3,
     )
+    this.position.copy(tmp_vec_3)
+    this.position.z = 0.4
     getWorldMatrix(this, tmp_vec_3)
-    // tmp_vec_3.z = 0
-    getScaleFromCameraDistance(this._camera, tmp_vec_3, this.scale)
+    getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
+    this.scale.set(tmp_vec_3.x)
     this.scale.multiply(SIZE)
   }
 }

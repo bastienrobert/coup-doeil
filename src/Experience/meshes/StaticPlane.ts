@@ -17,6 +17,7 @@ const HEIGHT = 1
 export interface StaticPlaneParams {
   camera: Camera
   resolution: Vec2
+  transparent?: boolean
   texture?: string
 }
 
@@ -27,12 +28,16 @@ export default class StaticPlane extends Mesh {
 
   isCollide: boolean
 
-  constructor(gl, { texture, camera, resolution }: StaticPlaneParams) {
+  constructor(
+    gl,
+    { texture, camera, resolution, transparent }: StaticPlaneParams,
+  ) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
       program: new Program(gl, {
         vertex,
         fragment,
+        transparent,
         uniforms: {
           uTexture: {
             value: TextureLoader.load(gl, {
