@@ -4,7 +4,8 @@ import spotLeft from '~/assets/textures/spotLeft.png'
 import spotRight from '~/assets/textures/spotRight.png'
 
 import fragment from '~/shaders/spot/fragment.glsl'
-// import gui from '../gui'
+
+import spots from './spots.json'
 import SpotData from './SpotData'
 
 interface SpotParams {
@@ -40,7 +41,7 @@ export default class Spot implements Pass {
         }),
       },
       tData: {
-        value: new SpotData(this._gl),
+        value: new SpotData(this._gl, spots.intro),
       },
       uResolution: { value: resolution },
       uLeftEnable: { value: 1 },
