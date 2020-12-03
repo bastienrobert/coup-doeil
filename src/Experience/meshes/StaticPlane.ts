@@ -7,8 +7,8 @@ import {
   Color,
 } from 'ogl'
 
-import vertex from '~/shaders/plane/vertex.glsl'
-import fragment from '~/shaders/plane/fragment.glsl'
+import vertex from '~/shaders/collidable/vertex.glsl'
+import fragment from '~/shaders/collidable/fragment.glsl'
 import CollidableMesh from '../core/CollidableMesh'
 
 const WIDTH = 1

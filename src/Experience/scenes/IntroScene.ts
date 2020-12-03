@@ -7,6 +7,8 @@ import RaycastableMesh from '../core/RaycastableMesh'
 import Planes from '../groups/Planes'
 import DynamicPlane from '../meshes/DynamicPlane'
 
+import liberty from '~/assets/textures/liberty.png'
+
 interface IntroSceneParams extends SceneParams {
   raycastable: RaycastableMesh[]
 }
@@ -40,6 +42,7 @@ export default class IntroScene extends Transform implements Scene {
       mouse: this._mouse,
       camera: this._camera,
       resolution: this._resolution,
+      texture: liberty,
       positionOnScreen: { top: 50, left: (1 / 6) * 100 },
     })
     this._raycastable.push(this._dynamic)

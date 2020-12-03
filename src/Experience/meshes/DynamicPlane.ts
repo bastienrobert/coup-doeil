@@ -5,12 +5,13 @@ import {
   Program,
   Vec2,
   Plane as OGLPlane,
+  TextureLoader,
 } from 'ogl'
 
 import RaycastableMesh from '../core/RaycastableMesh'
 
-import vertex from '~/shaders/cube/vertex.glsl'
-import fragment from '~/shaders/cube/fragment.glsl'
+import vertex from '~/shaders/dynamic/vertex.glsl'
+import fragment from '~/shaders/dynamic/fragment.glsl'
 
 import {
   Rect,
@@ -27,6 +28,7 @@ interface DynamicPlaneParams {
   mouse: Vec3
   resolution: Vec2
   camera: Camera
+  texture?: string
   positionOnScreen?: Rect
 }
 
@@ -63,7 +65,13 @@ export default class DynamicPlane extends RaycastableMesh {
 
   constructor(
     gl,
-    { mouse, camera, resolution, positionOnScreen }: DynamicPlaneParams,
+    {
+      mouse,
+      camera,
+      resolution,
+      texture,
+      positionOnScreen,
+    }: DynamicPlaneParams,
   ) {
     super(gl, {
       geometry: new OGLPlane(gl, { width: WIDTH, height: HEIGHT }),
@@ -71,6 +79,12 @@ export default class DynamicPlane extends RaycastableMesh {
         vertex,
         fragment,
         uniforms: {
+          uTexture: {
+            value: TextureLoader.load(gl, {
+              src: texture,
+              generateMipmaps: false,
+            }),
+          },
           uHit: { value: 0 },
         },
       }),

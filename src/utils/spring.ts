@@ -1,6 +1,6 @@
 import Inrtia from 'inrtia'
 
-type InrtiaValue = number | object | any[]
+type InrtiaValue = number | { [key: string]: any } | any[]
 
 interface InrtiaConfig {
   friction: number
@@ -14,7 +14,7 @@ type SpringConfigWithoutCallback = Omit<SpringConfig, 'callback'>
 
 export interface SpringConfig {
   config?: Partial<InrtiaConfig>
-  callback?: (current?: number, previous?: number) => void
+  callback?: (current?: InrtiaValue, previous?: InrtiaValue) => void
   value: InrtiaValue
 }
 

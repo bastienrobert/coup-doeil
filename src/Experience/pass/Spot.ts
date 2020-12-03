@@ -8,6 +8,9 @@ import fragment from '~/shaders/spot/fragment.glsl'
 import spots from './spots.json'
 import SpotData from './SpotData'
 
+import spring, { Spring } from '~/utils/spring'
+import timestamp, { Timestamp } from '~/utils/timestamp'
+
 interface SpotParams {
   resolution: Vec2
 }
@@ -17,6 +20,8 @@ type SpotSide = 'LEFT' | 'RIGHT' | 'BOTH'
 export default class Spot implements Pass {
   _gl: OGLRenderingContext
   _resolution: Vec2
+  _spring: Spring
+  _timestamp: Timestamp
 
   fragment: string
   uniforms: any
@@ -25,6 +30,19 @@ export default class Spot implements Pass {
     this._gl = gl
 
     this._resolution = resolution
+    this._spring = spring({
+      value: {
+        left: 1,
+        right: 1,
+      },
+      callback: ({ left, right }: any) => {
+        this.uniforms.uLeftEnable.value = left
+        this.uniforms.uRightEnable.value = right
+      },
+    })
+
+    this._timestamp = timestamp()
+
     this.fragment = fragment
 
     this.uniforms = {
@@ -55,16 +73,28 @@ export default class Spot implements Pass {
   setSide(side: SpotSide) {
     switch (side) {
       case 'LEFT':
-        this.uniforms.uLeftEnable.value = 1
-        this.uniforms.uRightEnable.value = 0
+        this._spring.set({
+          value: {
+            left: 1,
+            right: 0,
+          },
+        })
         break
       case 'RIGHT':
-        this.uniforms.uLeftEnable.value = 0
-        this.uniforms.uRightEnable.value = 1
+        this._spring.set({
+          value: {
+            left: 0,
+            right: 1,
+          },
+        })
         break
       case 'BOTH':
-        this.uniforms.uLeftEnable.value = 1
-        this.uniforms.uRightEnable.value = 1
+        this._spring.set({
+          value: {
+            left: 1,
+            right: 1,
+          },
+        })
         break
     }
   }
@@ -74,6 +104,8 @@ export default class Spot implements Pass {
   }
 
   update = (t: number) => {
+    this._timestamp.update(t * 1000)
+    this._spring.update(this._timestamp.delta)
     this.uniforms.uTime.value = t
   }
 }
