@@ -71,10 +71,10 @@ export default class DogScene extends Transform implements Scene {
 
   onBeforeEnter = async () => {
     this._game.set('dog')
+    setTimeout(() => {
+      this._game.push('qsdf')
+    }, 1000)
     return
-    // setTimeout(() => {
-    //   this._game.push('qsdf')
-    // }, 1000)
   }
 
   onLeave = async () => {
