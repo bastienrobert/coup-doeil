@@ -24,10 +24,12 @@ export default class IddleScene extends Transform implements Scene {
   }
 
   onBeforeLeave = async () => {
-    return this._spot.transite('WHITE')
+    // this._spot.transite('WHITE')
+    return
   }
 
   onLeave = async () => {
     this._spot.controlable = true
+    this._spot.visible(true)
   }
 }

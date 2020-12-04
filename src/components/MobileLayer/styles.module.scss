@@ -1,4 +1,4 @@
-.Intro {
+.MobileLayer {
   background: #fdf4e9;
   position: absolute;
   top: 0;
@@ -6,7 +6,12 @@
   width: 100%;
   min-height: 100vh;
   color: #f75d45;
-  z-index: 99;
+  z-index: 999;
+  visibility: hidden;
+
+  @media (orientation: portrait) {
+    visibility: visible;
+  }
 
   img {
     -webkit-user-drag: none;

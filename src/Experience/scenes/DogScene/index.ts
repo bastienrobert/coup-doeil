@@ -7,6 +7,11 @@ import Background from './objects/Background'
 import Floor from './groups/Floor'
 
 import RaycastableMesh from '~/Experience/core/RaycastableMesh'
+import Spot from '~/Experience/pass/Spot'
+
+interface DogSceneParams extends SceneParams {
+  spot: Spot
+}
 
 export default class DogScene extends Transform implements Scene {
   name = 'dog'
@@ -14,6 +19,7 @@ export default class DogScene extends Transform implements Scene {
 
   _gl: OGLRenderingContext
   _game: Game
+  _spot: Spot
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
@@ -21,7 +27,7 @@ export default class DogScene extends Transform implements Scene {
   _background: Background
   _floor: Floor
 
-  constructor(gl, { game, resolution, mouse, camera }: SceneParams) {
+  constructor(gl, { game, resolution, mouse, camera, spot }: DogSceneParams) {
     super()
 
     this._gl = gl
@@ -30,6 +36,7 @@ export default class DogScene extends Transform implements Scene {
     this._resolution = resolution
     this._mouse = mouse
     this._camera = camera
+    this._spot = spot
 
     this.raycastable = []
 
@@ -45,7 +52,14 @@ export default class DogScene extends Transform implements Scene {
 
   onBeforeEnter = async () => {
     this._game.set('dog')
-    return Promise.resolve()
+    return
+    // setTimeout(() => {
+    //   this._game.push('qsdf')
+    // }, 1000)
+  }
+
+  onLeave = async () => {
+    return this._spot.transite('WHITE')
   }
 
   onMouseDown = () => {
@@ -66,7 +80,7 @@ export default class DogScene extends Transform implements Scene {
   }
 
   update = (t) => {
-    this._floor.update()
+    this._floor.update(t)
   }
 
   _onCollide = (name) => {

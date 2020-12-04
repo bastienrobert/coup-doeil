@@ -9,7 +9,12 @@ import useOnResize from '~/hooks/useOnResize'
 
 import css from './styles.module.scss'
 
-export default function WebGL() {
+interface WebGLParams {
+  play: boolean
+  onWin: (payload: boolean) => void
+}
+
+export default function WebGL({ play, onWin }: WebGLParams) {
   const canvasRef = useRef<HTMLCanvasElement>()
   const rendererRef = useRef<Renderer>()
   const experienceRef = useRef<Experience>()
@@ -38,14 +43,24 @@ export default function WebGL() {
       ],
       'stuff',
     )
+
+    const onInternalWin = () => onWin(true)
+    gameRef.current.on('gameover', onInternalWin)
     experienceRef.current = new Experience(rendererRef.current, {
       game: gameRef.current,
     })
 
     return () => {
+      gameRef.current.off('gameover', onInternalWin)
       experienceRef.current.dispose()
     }
   }, [])
+
+  useEffect(() => {
+    if (play && gameRef.current) {
+      gameRef.current.reset()
+    }
+  }, [play, gameRef])
 
   useOnResize(onResize, true)
 

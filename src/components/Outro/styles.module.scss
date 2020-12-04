@@ -1,57 +1,61 @@
 .Outro {
-  background: #EF5A44;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #ef5a44;
   min-height: 100vh;
-  position:relative;
-  color: #FDF4E9;
-  z-index:99;
+  color: #fdf4e9;
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
 }
 
-.h1{
-  padding-top:8%;
-  padding-bottom:2%;
+.h1 {
+  padding-top: 8%;
+  padding-bottom: 2%;
   font-family: 'Gilam Black';
   font-size: calc(72px + 2vmin);
   text-transform: uppercase;
   letter-spacing: 0.35em;
 }
 
-.h2{
+.h2 {
   letter-spacing: 0.07em;
   font-family: 'Mak';
   font-size: calc(210px + 2vmin);
   text-transform: uppercase;
 }
 
-.dog{
+.dog {
   height: 74vmin;
   margin-top: -45vmin;
 }
 
-.p{
+.p {
   font-family: 'Gilam Black';
-  font-size:2em;
+  font-size: 2em;
   font-weight: 600;
   line-height: 1.2em;
   letter-spacing: 0.01em;
-
 }
 
-@media only screen and (max-device-width : 600px){
-  .h1{
-    padding-top:4rem;
-    font-size:1.8em;
+@media only screen and (max-device-width: 600px) {
+  .h1 {
+    padding-top: 4rem;
+    font-size: 1.8em;
   }
-  .h2{
+  .h2 {
     font-size: 5.8em;
   }
-  .grandma{
-    max-height:40Vmin;
-    margin-top:-15Vmin;
+  .grandma {
+    max-height: 40vmin;
+    margin-top: -15vmin;
   }
-  .dog{
-    position:absolute;
-    max-height: 10Vmin;
-    margin-left:15Vmin;
-    margin-top:-8Vmin;
+  .dog {
+    position: absolute;
+    max-height: 10vmin;
+    margin-left: 15vmin;
+    margin-top: -8vmin;
   }
 }
