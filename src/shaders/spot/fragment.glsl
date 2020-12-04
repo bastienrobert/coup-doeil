@@ -35,10 +35,10 @@ vec2 contain(vec2 r, float s, vec2 i) {
 vec4 tex(vec2 i, vec2 xy, sampler2D tex, vec2 d) {
   float a = uResolution.x / uResolution.y;
   vec2 rp = vec2(
-    texValue(vec2((i.x + 0.)/6. + 1./12., i.y)),
-    texValue(vec2((i.x + 1.)/6. + 1./12., i.y))
+    texValue(vec2((i.x + 0.)/10. + 1./20., i.y)),
+    texValue(vec2((i.x + 1.)/10. + 1./20., i.y))
   );
-  float s = texValue(vec2((i.x + 2.)/6. + 1./12., i.y)) * .1;
+  float s = texValue(vec2((i.x + 2.)/10. + 1./20., i.y)) * .1;
 
   // texture position
   vec2 p = vec2(-rp.x * .1 / s, rp.y * .1 / (s * a));
@@ -49,15 +49,17 @@ vec4 tex(vec2 i, vec2 xy, sampler2D tex, vec2 d) {
 
 void main() {
   float a = uResolution.x / uResolution.y;
-  vec2 xy = vec2(6., 1.);
+  vec2 xy = vec2(10., 1.);
 
   float aLeft1 = tex(vec2(0., 1.), xy, tLeft, uTextureDimension).r;
   float aLeft2 = tex(vec2(1. * 3., 1.), xy, tLeft, uTextureDimension).g;
-  float aLeft = smoothstep(.2, 1., (aLeft1 + aLeft2));
+  float aLeft3 = tex(vec2(2. * 3., 1.), xy, tLeft, uTextureDimension).g;
+  float aLeft = smoothstep(.2, 1., (aLeft1 + aLeft2 + aLeft3));
 
   float aRight1 = tex(vec2(0., 0.), xy, tRight, uTextureDimension).r;
   float aRight2 = tex(vec2(1. * 3., 0.), xy, tRight, uTextureDimension).g;
-  float aRight = smoothstep(.2, 1., (aRight1 + aRight2));
+  float aRight3 = tex(vec2(2. * 3., 0.), xy, tRight, uTextureDimension).g;
+  float aRight = smoothstep(.2, 1., (aRight1 + aRight2 + aRight3));
   
   vec3 spot = vec3(
     (aLeft * uLeftEnable)

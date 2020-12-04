@@ -15,8 +15,9 @@ import RaycastableMesh from './core/RaycastableMesh'
 
 import Game from './Game'
 import SceneController from './controllers/SceneController'
-import IntroScene from './scenes/IntroScene'
+import IddleScene from './scenes/IddleScene'
 import StuffScene from './scenes/StuffScene'
+import DogScene from './scenes/DogScene'
 
 import gui from './gui'
 
@@ -31,12 +32,16 @@ document.body.appendChild(stats.dom)
 
 const guiData: any = {}
 
+export interface ExperienceParams {
+  game: Game
+}
+
 export default class Experience extends Transform {
   renderer: Renderer
+  game: Game
   _gl: OGLRenderingContext
   _rafID: number
 
-  _game: Game
   _scenes: SceneController
   _camera: Camera
   _controls: Orbit
@@ -48,22 +53,12 @@ export default class Experience extends Transform {
 
   _spot: Spot
 
-  constructor(renderer: Renderer) {
+  constructor(renderer: Renderer, { game }: ExperienceParams) {
     super()
 
     this.renderer = renderer
     this._gl = renderer.gl
     this._gl.clearColor(1, 1, 1, 1)
-
-    this._game = new Game(
-      [
-        {
-          name: 'stuff',
-          objects: ['boot', 'bulb', 'clock', 'gears', 'swat'],
-        },
-      ],
-      'stuff',
-    )
 
     this._camera = new Camera(this._gl)
     this._camera.position.set(0, 0, 10)
@@ -79,22 +74,47 @@ export default class Experience extends Transform {
 
     this._raycast = new Raycast(this._gl)
 
+    this._post = new Post(this._gl)
+    this._initPass()
+
+    this.game = game
+    game
+      .on('win', (name) => {
+        switch (name) {
+          case 'stuff':
+            this._scenes.set('dog')
+            break
+          case 'dog':
+            this._scenes.set('iddle')
+            break
+          default:
+            break
+        }
+      })
+      .on('set', (name) => this._scenes.set(name))
+
     this._scenes = new SceneController(
       [
-        new IntroScene(),
+        new IddleScene({
+          spot: this._spot,
+        }),
         new StuffScene(this._gl, {
-          game: this._game,
+          game: this.game,
+          mouse: this._mouseNorm,
+          camera: this._camera,
+          resolution: this._resolution,
+          spot: this._spot,
+        }),
+        new DogScene(this._gl, {
+          game: this.game,
           mouse: this._mouseNorm,
           camera: this._camera,
           resolution: this._resolution,
         }),
       ],
-      'stuff',
+      'iddle',
     )
     this.addChild(this._scenes)
-
-    this._post = new Post(this._gl)
-    this._initPass()
 
     this._initGUI()
     this._listen()
@@ -172,6 +192,7 @@ export default class Experience extends Transform {
     if (this._rafID) cancelAnimationFrame(this._rafID)
     // DISPOSABLE ELEMENTS HERE (eg. REMOVE LISTENERS)
     this._unlisten()
+    this.game.removeAllListeners()
   }
 
   _onKeyDown = (e: KeyboardEvent) => {
@@ -238,5 +259,6 @@ export default class Experience extends Transform {
       .add(guiData, 'scenes')
       .options(this._scenes.scenes.map((s) => s.name))
       .onChange(this._scenes.set)
+      .listen()
   }
 }

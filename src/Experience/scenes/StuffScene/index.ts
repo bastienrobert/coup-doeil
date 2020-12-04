@@ -1,6 +1,7 @@
 import { Camera, OGLRenderingContext, Transform, Vec2, Vec3 } from 'ogl'
 
 import Game from '~/Experience/Game'
+import Spot from '~/Experience/pass/Spot'
 import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
 
 import RaycastableMesh from '~/Experience/core/RaycastableMesh'
@@ -15,12 +16,17 @@ import BottomLeftShelf from './groups/BottomLeftShelf'
 
 import gui from '~/Experience/gui'
 
+interface StuffSceneParams extends SceneParams {
+  spot: Spot
+}
+
 export default class StuffScene extends Transform implements Scene {
   name = 'stuff'
   raycastable: RaycastableMesh[]
 
   _gl: OGLRenderingContext
   _game: Game
+  _spot: Spot
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
@@ -33,7 +39,7 @@ export default class StuffScene extends Transform implements Scene {
   _bottomLeftShelf: BottomLeftShelf
   _topRightShelf: TopRightShelf
 
-  constructor(gl, { game, resolution, mouse, camera }: SceneParams) {
+  constructor(gl, { game, resolution, mouse, camera, spot }: StuffSceneParams) {
     super()
 
     this._gl = gl
@@ -42,6 +48,7 @@ export default class StuffScene extends Transform implements Scene {
     this._resolution = resolution
     this._mouse = mouse
     this._camera = camera
+    this._spot = spot
 
     this.raycastable = []
 
@@ -109,6 +116,14 @@ export default class StuffScene extends Transform implements Scene {
     )
 
     this._initGUI()
+  }
+
+  onEnter = async () => {
+    this._game.set('stuff')
+  }
+
+  onLeave = async () => {
+    return this._spot.transite('BLACK')
   }
 
   onMouseDown = () => {

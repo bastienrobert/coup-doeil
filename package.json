@@ -26,6 +26,7 @@
     ]
   },
   "dependencies": {
+    "@bastienrobert/events": "^1.0.4",
     "dat.gui": "^0.7.7",
     "howler": "^2.2.1",
     "inrtia": "https://github.com/bastienrobert/inrtia/tarball/08558cfbd2c64658f66add610a116e120309ce41",

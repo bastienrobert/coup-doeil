@@ -1,3 +1,5 @@
+import Emitter from '@bastienrobert/events'
+
 export type Stages = StageParams[]
 
 interface StageParams {
@@ -28,15 +30,18 @@ class Stage {
   }
 
   check() {
-    return Object.values(this._values).every((v) => v)
+    // return Object.values(this._values).every((v) => v)
+    return true
   }
 }
 
-export default class Game {
+export default class Game extends Emitter {
   _stages: Stages
   current: Stage
 
   constructor(stages: Stages, init?: string) {
+    super()
+
     this._stages = stages
     this.set(init)
   }
@@ -46,16 +51,21 @@ export default class Game {
     if (stage) this.current = new Stage(stage)
   }
 
+  reset() {
+    this.emit('set', 'stuff')
+  }
+
   push(name: string) {
     if (this.current.has(name)) {
       this.current.set(name, true)
     }
-    if (this.current.check()) this.win()
+    if (this.current.check()) this.win(this.current.name)
   }
 
-  win() {
+  win = (name) => {
     if (this.current.won) return
+    console.log('WIN')
     this.current.won = true
-    console.log('GOTO NEXT STAGE')
+    this.emit('win', name)
   }
 }

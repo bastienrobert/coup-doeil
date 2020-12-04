@@ -43,6 +43,7 @@ export default class Spot implements Pass {
   _transition: Spring
   _timestamp: Timestamp
 
+  controlable: boolean
   fragment: string
   uniforms: any
 
@@ -55,7 +56,7 @@ export default class Spot implements Pass {
         left: 1,
         right: 1,
       },
-      callback: ({ left, right, transition }: any) => {
+      callback: ({ left, right }: any) => {
         this.uniforms.uLeftEnable.value = left
         this.uniforms.uRightEnable.value = right
       },
@@ -99,7 +100,7 @@ export default class Spot implements Pass {
         }),
       },
       tData: {
-        value: new SpotData(this._gl, spots.intro),
+        value: new SpotData(this._gl, spots.stuff),
       },
       uResolution: { value: resolution },
       uMask: { value: new Vec4(1, 1, 1, 0) },
@@ -111,7 +112,19 @@ export default class Spot implements Pass {
     }
   }
 
+  set({ left, right, data }) {
+    if (left) {
+      TextureLoader.loadImage(this._gl, left, this.uniforms.tLeft.value)
+    }
+    if (right) {
+      TextureLoader.loadImage(this._gl, right, this.uniforms.tRight.value)
+    }
+    if (data) this.uniforms.tData.value.set(data)
+  }
+
   setSide(side: SpotSide) {
+    if (!this.controlable) return
+
     switch (side) {
       case 'LEFT':
         this._spring.set({
@@ -140,14 +153,17 @@ export default class Spot implements Pass {
     }
   }
 
-  transite = (color: 'WHITE' | 'BLACK') => {
-    this._transiting = true
-    this._transition.set({
-      config: TRANSITE_IN,
-      value:
-        color === 'WHITE'
-          ? tmp_vec_4.set(1, 1, 1, 1)
-          : tmp_vec_4.set(0, 0, 0, 1),
+  transite = (color: 'WHITE' | 'BLACK'): Promise<void> => {
+    return new Promise((resolve) => {
+      this._transition.emitter.once('off', () => resolve && resolve())
+      this._transiting = true
+      this._transition.set({
+        config: TRANSITE_IN,
+        value:
+          color === 'WHITE'
+            ? tmp_vec_4.set(1, 1, 1, 1)
+            : tmp_vec_4.set(0, 0, 0, 1),
+      })
     })
   }
 

@@ -62,6 +62,9 @@ export default class SceneController extends Transform {
   set = async (name: string) => {
     const previous = this._current
     const next = this.scenes.find((s) => s.name === name)
+    this.name = next.name
+
+    console.log(previous, next)
 
     // HIDE PREVIOUS SCENE
     if (previous) {
@@ -81,7 +84,6 @@ export default class SceneController extends Transform {
     }
 
     this._current = next
-    this.name = next.name
     return
   }
 
