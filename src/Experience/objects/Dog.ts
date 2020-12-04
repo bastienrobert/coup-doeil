@@ -11,8 +11,8 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { bottom: 40, left: 55 }
-const SIZE = 0.4
+const POSITION = { bottom: 45, left: 60 }
+const SIZE = 0.5
 
 export default class Dog extends StaticPlane {
   constructor(gl, params: StaticPlaneParams) {
@@ -33,7 +33,6 @@ export default class Dog extends StaticPlane {
     )
     this.position.copy(tmp_vec_3)
     this.position.z = 0.7
-    this.rotation.x = Math.PI / 3
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)

@@ -13,8 +13,8 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 84, left: 52 }
-const SIZE = 0.09
+const POSITION = { bottom: 25, left: 55 }
+const SIZE = 0.12
 
 export default class GearsBlack extends CollidablePlane {
   constructor(gl, params: CollidablePlaneParams) {
@@ -34,7 +34,6 @@ export default class GearsBlack extends CollidablePlane {
       tmp_vec_3,
     )
     this.position.copy(tmp_vec_3)
-    this.rotation.x = Math.PI / 3
     this.position.z = 0.9
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)

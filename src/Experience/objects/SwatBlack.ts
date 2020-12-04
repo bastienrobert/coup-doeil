@@ -13,8 +13,8 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 78, left: 44 }
-const SIZE = 0.09
+const POSITION = { bottom: 30, left: 44 }
+const SIZE = 0.15
 
 export default class SwatBlack extends CollidablePlane {
   constructor(gl, params: CollidablePlaneParams) {
@@ -35,7 +35,6 @@ export default class SwatBlack extends CollidablePlane {
     )
     this.position.copy(tmp_vec_3)
     this.position.z = 0.8
-    this.rotation.x = Math.PI / 3
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)

@@ -57,7 +57,8 @@ export default class Game extends Emitter {
   }
 
   reset() {
-    this.emit('set', 'stuff')
+    // this.emit('set', 'stuff')
+    this.emit('set', 'dog')
   }
 
   push(name: string) {

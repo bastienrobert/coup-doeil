@@ -96,10 +96,12 @@ export default class DogScene extends Transform implements Scene {
   resize = () => {
     this._background.resize()
     this._floor.resize()
+    this._dog.resize()
+    this._floating.resize()
   }
 
   update = (t) => {
-    // this._floor.update(t)
+    //this._floor.update(t)
   }
 
   _onCollide = (name) => {
