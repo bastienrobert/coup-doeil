@@ -67,6 +67,6 @@ void main() {
   );
 
   gl_FragColor = texture2D(tMap, vUv);
-  gl_FragColor.rgb *= (1. - spot);
+  gl_FragColor.rgb *= (1. - spot * (1. - uColor));
   gl_FragColor = mix(gl_FragColor, uMask, uMask.a);
 }

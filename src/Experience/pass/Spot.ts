@@ -15,16 +15,16 @@ import fragment from '~/shaders/spot/fragment.glsl'
 import SpotData from './SpotData'
 import spots from './spots.json'
 
-import spring, { Spring } from '~/utils/spring'
+import spring, { InrtiaConfig, Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
 
 const tmp_vec_4 = new Vec4()
 
-const TRANSITE_IN = {
+const TRANSITE_IN: InrtiaConfig = {
   friction: 12,
   rigidity: 0.25,
 }
-const TRANSITE_OUT = {
+const TRANSITE_OUT: InrtiaConfig = {
   friction: 50,
   rigidity: 0.1,
 }
@@ -58,6 +58,10 @@ export default class Spot implements Pass {
 
     this._resolution = resolution
     this._spring = spring({
+      config: {
+        interpolation: 'basic',
+        friction: 7,
+      },
       value: {
         left: 0,
         right: 0,
@@ -125,7 +129,10 @@ export default class Spot implements Pass {
     if (right) {
       TextureLoader.loadImage(this._gl, right, this.uniforms.tRight.value)
     }
-    if (data) this.uniforms.tData.value.set(data)
+    if (data) {
+      this.uniforms.tData.value.set(data)
+      this.uniforms.uColor.value.set(data.color)
+    }
   }
 
   visible(payload: boolean) {
