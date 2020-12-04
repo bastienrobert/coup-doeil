@@ -24,7 +24,7 @@ export default class Boot extends DynamicPlane implements ColliderMesh {
   }
 
   isInCollision(mesh: Mesh) {
-    if (mesh.name === 'bootShadow') {
+    if (mesh.name === 'bootShadow' || mesh.name === 'bootBlack') {
       this.moveTo(mesh.position)
       setTimeout(() => {
         this.hide()

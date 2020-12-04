@@ -24,7 +24,7 @@ export default class Clock extends DynamicPlane implements ColliderMesh {
   }
 
   isInCollision(mesh: Mesh) {
-    if (mesh.name === 'clockShadow') {
+    if (mesh.name === 'clockShadow' || mesh.name === 'clockBlack') {
       this.moveTo(mesh.position)
       setTimeout(() => {
         this.hide()

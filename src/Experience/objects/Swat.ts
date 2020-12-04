@@ -24,7 +24,7 @@ export default class Swat extends DynamicPlane implements ColliderMesh {
   }
 
   isInCollision(mesh: Mesh) {
-    if (mesh.name === 'swatShadow') {
+    if (mesh.name === 'swatShadow' || mesh.name === 'swatBlack') {
       this.moveTo(mesh.position)
       setTimeout(() => {
         this.hide()

@@ -24,7 +24,7 @@ export default class Gears extends DynamicPlane implements ColliderMesh {
   }
 
   isInCollision(mesh: Mesh) {
-    if (mesh.name === 'gearsShadow') {
+    if (mesh.name === 'gearsShadow' || mesh.name === 'gearsBlack') {
       this.moveTo(mesh.position)
       setTimeout(() => {
         this.hide()

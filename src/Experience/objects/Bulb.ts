@@ -24,7 +24,7 @@ export default class Bulb extends DynamicPlane implements ColliderMesh {
   }
 
   isInCollision(mesh: Mesh) {
-    if (mesh.name === 'bulbShadow') {
+    if (mesh.name === 'bulbShadow' || mesh.name === 'bulbBlack') {
       this.moveTo(mesh.position)
       setTimeout(() => {
         this.hide()
@@ -36,7 +36,7 @@ export default class Bulb extends DynamicPlane implements ColliderMesh {
   resize = () => {
     super.resize()
 
-    this.position.z = 0.4
+    this.position.z = 0.5
 
     this.initial.z = this.position.z
   }
