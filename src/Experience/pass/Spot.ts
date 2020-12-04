@@ -12,8 +12,8 @@ import spotRight from '~/assets/textures/spotRight.png'
 
 import fragment from '~/shaders/spot/fragment.glsl'
 
-import spots from './spots.json'
 import SpotData from './SpotData'
+import spots from './spots.json'
 
 import spring, { Spring } from '~/utils/spring'
 import timestamp, { Timestamp } from '~/utils/timestamp'
@@ -31,6 +31,12 @@ const TRANSITE_OUT = {
 
 interface SpotParams {
   resolution: Vec2
+}
+
+interface SetSpotParams {
+  left?: string
+  right?: string
+  data?: any
 }
 
 type SpotSide = 'LEFT' | 'RIGHT' | 'BOTH'
@@ -53,8 +59,8 @@ export default class Spot implements Pass {
     this._resolution = resolution
     this._spring = spring({
       value: {
-        left: 1,
-        right: 1,
+        left: 0,
+        right: 0,
       },
       callback: ({ left, right }: any) => {
         this.uniforms.uLeftEnable.value = left
@@ -104,15 +110,15 @@ export default class Spot implements Pass {
       },
       uResolution: { value: resolution },
       uMask: { value: new Vec4(1, 1, 1, 0) },
-      uLeftEnable: { value: 1 },
-      uRightEnable: { value: 1 },
+      uLeftEnable: { value: 0 },
+      uRightEnable: { value: 0 },
       uTextureDimension: { value: new Vec2(1024, 1024) },
       uTime: { value: 0 },
       uColor: { value: new Color(0.3, 0.2, 0.5) },
     }
   }
 
-  set({ left, right, data }) {
+  set({ left, right, data }: SetSpotParams) {
     if (left) {
       TextureLoader.loadImage(this._gl, left, this.uniforms.tLeft.value)
     }
@@ -120,6 +126,15 @@ export default class Spot implements Pass {
       TextureLoader.loadImage(this._gl, right, this.uniforms.tRight.value)
     }
     if (data) this.uniforms.tData.value.set(data)
+  }
+
+  visible(payload: boolean) {
+    this._spring.set({
+      value: {
+        left: payload ? 1 : 0,
+        right: payload ? 1 : 0,
+      },
+    })
   }
 
   setSide(side: SpotSide) {

@@ -1,131 +1,140 @@
 .Intro {
-  background: #FDF4E9;
-  position: relative;
+  background: #fdf4e9;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   min-height: 100vh;
-  color: #F75D45;
-  z-index:999;
+  color: #f75d45;
+  z-index: 99;
+
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
 }
 
-.h1{
-  padding-top:6rem;
-  padding-bottom:1.2rem;
+.h1 {
+  padding-top: 6rem;
+  padding-bottom: 1.2rem;
   font-family: 'Gilam Black';
-  font-size:4.5em;
+  font-size: 4.5em;
   text-transform: uppercase;
   letter-spacing: 0.35em;
 }
 
-.h2{
+.h2 {
   letter-spacing: 0.07em;
   font-family: 'Mak';
   font-size: 14.8em;
   text-transform: uppercase;
 }
 
-.grandma{
-  margin-top:-18Vmin;
-  max-height:48Vmin;
+.grandma {
+  margin-top: -18vmin;
+  max-height: 48vmin;
   justify-content: center;
-  position:static;
+  cursor: pointer;
 }
 
-.dog{
-  position:absolute;
-  max-height: 19Vmin;
-  margin-left:25Vmin;
-  margin-top:-15Vmin;
+.dog {
+  position: absolute;
+  max-height: 19vmin;
+  margin-left: 25vmin;
+  margin-top: -15vmin;
 }
 
-.dogMove{
-  position:absolute;
-  max-height: 19Vmin;
-  margin-left:25Vmin;
-  margin-top:-15Vmin;
+.dogMove {
+  position: absolute;
+  max-height: 19vmin;
+  margin-left: 25vmin;
+  margin-top: -15vmin;
   transition: transform 600ms ease-in-out;
   transform: scale(3.5) translateY(50%) translateX(-55%);
 }
 
-.disable{
-  display:none;
+.disable {
+  display: none;
 }
 
-.arrowR{
-  position:absolute;
-  right:0;
-  bottom:0;
-  padding:50px 55px
+.arrowR {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 50px 55px;
 }
 
-.arrowL{
-  position:absolute;
-  right:0;
-  bottom:0;
-  padding:50px 9%
+.arrowL {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 50px 9%;
 }
 
-.p{
+.p {
   font-family: 'Gilam Black';
   font-weight: 200;
   font-size: calc(11px + 2vmin);
-  padding-top:1.8rem;
+  padding-top: 1.8rem;
+  cursor: pointer;
 }
 
-.bg_spoutnik{
-  padding-top:17.5rem;
-  width:18em;
+.bg_spoutnik {
+  padding-top: 17.5rem;
+  width: 18em;
+  cursor: pointer;
 }
 
-@media only screen and (max-device-width : 1440px) and (min-height: 900px){
-  .spoutnik{
-    padding-top:20rem;
+@media only screen and (max-device-width: 1440px) and (min-height: 900px) {
+  .spoutnik {
+    padding-top: 20rem;
   }
 }
 
-@media only screen and (max-device-width : 900px){
-  .h1{
-    padding-top:4rem;
-    font-size:2.5em;
+@media only screen and (max-device-width: 900px) {
+  .h1 {
+    padding-top: 4rem;
+    font-size: 2.5em;
   }
-  .h2{
+  .h2 {
     font-size: 7.8em;
   }
-  .grandma{
-    margin-top:-15Vmin;
-    max-height:40Vmin;
+  .grandma {
+    margin-top: -15vmin;
+    max-height: 40vmin;
   }
 }
 
-@media only screen and (max-device-width : 750px){
-  .h1{
-    padding-top:4rem;
-    font-size:2.5em;
+@media only screen and (max-device-width: 750px) {
+  .h1 {
+    padding-top: 4rem;
+    font-size: 2.5em;
   }
-  .h2{
+  .h2 {
     font-size: 7.8em;
   }
-  .grandma{
-    margin-top:-16Vmin;
-    max-height:40Vmin;
+  .grandma {
+    margin-top: -16vmin;
+    max-height: 40vmin;
   }
 }
 
-
-@media only screen and (max-device-width : 600px){
-  .h1{
-    padding-top:4rem;
-    font-size:1.8em;
+@media only screen and (max-device-width: 600px) {
+  .h1 {
+    padding-top: 4rem;
+    font-size: 1.8em;
   }
-  .h2{
+  .h2 {
     font-size: 5.8em;
   }
-  .grandma{
-    max-height:40Vmin;
-    margin-top:-15Vmin;
+  .grandma {
+    max-height: 40vmin;
+    margin-top: -15vmin;
   }
-  .dog{
-    position:absolute;
-    max-height: 10Vmin;
-    margin-left:15Vmin;
-    margin-top:-8Vmin;
+  .dog {
+    position: absolute;
+    max-height: 10vmin;
+    margin-left: 15vmin;
+    margin-top: -8vmin;
   }
 }

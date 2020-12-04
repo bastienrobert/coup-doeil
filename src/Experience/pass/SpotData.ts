@@ -47,7 +47,7 @@ export default class SpotData extends Texture {
   _leftSpots: number
   _rightSpots: number
 
-  constructor(gl: OGLRenderingContext, data: SpotDataData) {
+  constructor(gl: OGLRenderingContext, data?: SpotDataData) {
     super(gl, {
       image: new Uint8Array(1),
       width: 1,
@@ -55,7 +55,7 @@ export default class SpotData extends Texture {
       generateMipmaps: false,
     })
 
-    this.set(data)
+    if (data) this.set(data)
   }
 
   _size(ceiled: number) {

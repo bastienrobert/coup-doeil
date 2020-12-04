@@ -37,6 +37,7 @@ class Stage {
 
 export default class Game extends Emitter {
   _stages: Stages
+  index: number
   current: Stage
 
   constructor(stages: Stages, init?: string) {
@@ -47,8 +48,12 @@ export default class Game extends Emitter {
   }
 
   set(name: string) {
-    const stage = this._stages.find((s) => s.name === name)
-    if (stage) this.current = new Stage(stage)
+    const index = this._stages.findIndex((s) => s.name === name)
+    if (index !== undefined) {
+      const stage = this._stages[index]
+      this.index = index
+      this.current = new Stage(stage)
+    }
   }
 
   reset() {
@@ -64,7 +69,9 @@ export default class Game extends Emitter {
 
   win = (name) => {
     if (this.current.won) return
-    console.log('WIN')
+    if (this.index === this._stages.length - 1) {
+      this.emit('gameover')
+    }
     this.current.won = true
     this.emit('win', name)
   }

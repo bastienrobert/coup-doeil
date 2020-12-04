@@ -4,6 +4,11 @@ import Game from '~/Experience/Game'
 import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
 
 import RaycastableMesh from '~/Experience/core/RaycastableMesh'
+import Spot from '~/Experience/pass/Spot'
+
+interface DogSceneParams extends SceneParams {
+  spot: Spot
+}
 
 export default class DogScene extends Transform implements Scene {
   name = 'dog'
@@ -11,11 +16,12 @@ export default class DogScene extends Transform implements Scene {
 
   _gl: OGLRenderingContext
   _game: Game
+  _spot: Spot
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
 
-  constructor(gl, { game, resolution, mouse, camera }: SceneParams) {
+  constructor(gl, { game, resolution, mouse, camera, spot }: DogSceneParams) {
     super()
 
     this._gl = gl
@@ -24,6 +30,7 @@ export default class DogScene extends Transform implements Scene {
     this._resolution = resolution
     this._mouse = mouse
     this._camera = camera
+    this._spot = spot
 
     this.raycastable = []
 
@@ -33,6 +40,13 @@ export default class DogScene extends Transform implements Scene {
 
   onEnter = async () => {
     this._game.set('dog')
+    // setTimeout(() => {
+    //   this._game.push('qsdf')
+    // }, 1000)
+  }
+
+  onLeave = async () => {
+    return this._spot.transite('WHITE')
   }
 
   onMouseDown = () => {

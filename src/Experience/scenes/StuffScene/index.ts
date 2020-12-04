@@ -15,6 +15,7 @@ import BottomRightShelf from './groups/BottomRightShelf'
 import BottomLeftShelf from './groups/BottomLeftShelf'
 
 import gui from '~/Experience/gui'
+import spots from '~/Experience/pass/spots.json'
 
 interface StuffSceneParams extends SceneParams {
   spot: Spot
@@ -120,6 +121,7 @@ export default class StuffScene extends Transform implements Scene {
 
   onEnter = async () => {
     this._game.set('stuff')
+    this._spot.set({ data: spots.stuff })
   }
 
   onLeave = async () => {

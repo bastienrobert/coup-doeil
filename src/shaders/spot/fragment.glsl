@@ -53,12 +53,12 @@ void main() {
 
   float aLeft1 = tex(vec2(0., 1.), xy, tLeft, uTextureDimension).r;
   float aLeft2 = tex(vec2(1. * 3., 1.), xy, tLeft, uTextureDimension).g;
-  float aLeft3 = tex(vec2(2. * 3., 1.), xy, tLeft, uTextureDimension).g;
+  float aLeft3 = tex(vec2(2. * 3., 1.), xy, tLeft, uTextureDimension).b;
   float aLeft = smoothstep(.2, 1., (aLeft1 + aLeft2 + aLeft3));
 
   float aRight1 = tex(vec2(0., 0.), xy, tRight, uTextureDimension).r;
   float aRight2 = tex(vec2(1. * 3., 0.), xy, tRight, uTextureDimension).g;
-  float aRight3 = tex(vec2(2. * 3., 0.), xy, tRight, uTextureDimension).g;
+  float aRight3 = tex(vec2(2. * 3., 0.), xy, tRight, uTextureDimension).b;
   float aRight = smoothstep(.2, 1., (aRight1 + aRight2 + aRight3));
   
   vec3 spot = vec3(

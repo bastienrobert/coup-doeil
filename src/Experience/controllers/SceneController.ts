@@ -64,8 +64,6 @@ export default class SceneController extends Transform {
     const next = this.scenes.find((s) => s.name === name)
     this.name = next.name
 
-    console.log(previous, next)
-
     // HIDE PREVIOUS SCENE
     if (previous) {
       if (previous.onBeforeLeave) await previous.onBeforeLeave()

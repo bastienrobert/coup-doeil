@@ -20,9 +20,9 @@ import StuffScene from './scenes/StuffScene'
 import DogScene from './scenes/DogScene'
 
 import gui from './gui'
+import Spot from './pass/Spot'
 
 import { getResolutionNormalizedCoords } from '~/utils/maths'
-import Spot from './pass/Spot'
 
 const IS_TOUCHABLE = 'ontouchstart' in window
 
@@ -110,6 +110,7 @@ export default class Experience extends Transform {
           mouse: this._mouseNorm,
           camera: this._camera,
           resolution: this._resolution,
+          spot: this._spot,
         }),
       ],
       'iddle',
