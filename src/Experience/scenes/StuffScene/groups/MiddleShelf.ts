@@ -58,7 +58,6 @@ export default class MiddleShelf
       camera,
       resolution,
       depthWrite: false,
-      depthTest: false,
       transparent: true,
     })
     this.addChild(this._background)

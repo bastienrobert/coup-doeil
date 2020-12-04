@@ -2,14 +2,15 @@ import { Camera, OGLRenderingContext, Transform, Vec2, Vec3 } from 'ogl'
 
 import Game from '~/Experience/Game'
 import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
+import RaycastableMesh from '~/Experience/core/RaycastableMesh'
+import Spot from '~/Experience/pass/Spot'
 
 import Background from './objects/Background'
 import Floor from './objects/Floor'
 import Floating from './groups/Floating'
 import Dog from './groups/Dog'
 
-import RaycastableMesh from '~/Experience/core/RaycastableMesh'
-import Spot from '~/Experience/pass/Spot'
+import spots from '~/Experience/pass/spots.json'
 
 interface DogSceneParams extends SceneParams {
   spot: Spot
@@ -72,6 +73,7 @@ export default class DogScene extends Transform implements Scene {
   }
 
   onBeforeEnter = async () => {
+    this._spot.set({ data: spots.dog })
     this._game.set('dog')
     return
   }
