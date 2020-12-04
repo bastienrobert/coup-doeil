@@ -12,15 +12,12 @@ export default function Outro({ win }) {
   const componentRef = useRef<HTMLDivElement>()
   const isPlaying = useRef(false)
 
-  const onClick = useCallback(() => {
-    if (!isPlaying.current) {
-      isPlaying.current = true
-      outro.play()
-    }
-  }, [])
-
   useEffect(() => {
-    if (win)
+    if (win) {
+      if (!isPlaying.current) {
+        isPlaying.current = true
+        outro.play()
+      }
       anime({
         targets: componentRef.current,
         opacity: 1,
@@ -30,19 +27,23 @@ export default function Outro({ win }) {
           componentRef.current.style.visibility = 'visible'
         },
       })
+    }
   }, [win])
 
   return (
-    <div className={css.Outro} ref={componentRef} onClick={onClick}>
+    <div className={css.Outro} ref={componentRef}>
       <h1 className={css.h1}>mamie</h1>
       <h2 className={css.h2}>coco</h2>
       <img className={css.dog} src={dog} />
-      <a
-        className={css.p}
-        href="https://www.inserm.fr/information-en-sante/dossiers-information/degenerescence-maculaire-liee-age-dmla">
+      <p className={css.p}>
         Pour en savoir plus, <br />
-        tu peux cliquer ici
-      </a>
+        tu peux{' '}
+        <a
+          href="https://www.inserm.fr/information-en-sante/dossiers-information/degenerescence-maculaire-liee-age-dmla"
+          target="_blank">
+          cliquer ici
+        </a>
+      </p>
     </div>
   )
 }
