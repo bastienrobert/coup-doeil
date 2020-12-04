@@ -37,10 +37,12 @@ export default function Outro({ win }) {
       <h1 className={css.h1}>mamie</h1>
       <h2 className={css.h2}>coco</h2>
       <img className={css.dog} src={dog} />
-      <p className={css.p}>
+      <a
+        className={css.p}
+        href="https://www.inserm.fr/information-en-sante/dossiers-information/degenerescence-maculaire-liee-age-dmla">
         Pour en savoir plus, <br />
         tu peux cliquer ici
-      </p>
+      </a>
     </div>
   )
 }
