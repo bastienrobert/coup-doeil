@@ -112,9 +112,9 @@ export default class Floor extends Transform {
       this._camera,
       BG_POSITION,
       this._resolution,
-      this._background.position,
+      this.position,
     )
-    getWorldMatrix(this._background, tmp_vec_3)
+    getWorldMatrix(this, tmp_vec_3)
     this.position.copy(tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this._background.scale.set(tmp_vec_3.x)

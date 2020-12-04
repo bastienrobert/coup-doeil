@@ -124,8 +124,8 @@ export default class StuffScene extends Transform implements Scene {
   }
 
   resize = () => {
-    this._background.resize()
     this._floor.resize()
+    this._background.resize()
     this._topLeftShelf.resize()
     this._middleShelf.resize()
     this._bottomRightShelf.resize()
