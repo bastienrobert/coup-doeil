@@ -34,7 +34,7 @@ export default class GearsBlack extends CollidablePlane {
       tmp_vec_3,
     )
     this.position.copy(tmp_vec_3)
-    this.position.z = 0.9
+    this.position.z = 0.8
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)
