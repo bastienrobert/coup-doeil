@@ -2,6 +2,7 @@ import DynamicPlane, {
   DynamicPlaneParams,
 } from '~/Experience/meshes/DynamicPlane'
 import bat from '~/assets/textures/stuffs/bat.png'
+import { bat as batSound } from '~/sounds'
 
 export default class Bat extends DynamicPlane {
   constructor(gl, params: DynamicPlaneParams) {
@@ -11,6 +12,11 @@ export default class Bat extends DynamicPlane {
       texture: bat,
     })
   }
+
+  onMouseDown = () => {
+    if (this.isHit) batSound.play()
+  }
+
 
   resize = () => {
     super.resize()

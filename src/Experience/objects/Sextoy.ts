@@ -4,6 +4,7 @@ import DynamicPlane, {
 import { ColliderMesh } from '~/Experience/core/CollidableMesh'
 
 import sextoy from '~/assets/textures/stuffs/sextoy.png'
+import { thrill as thrillSound } from '~/sounds'
 
 export default class Sextoy extends DynamicPlane implements ColliderMesh {
   constructor(gl, params: DynamicPlaneParams) {
@@ -16,6 +17,10 @@ export default class Sextoy extends DynamicPlane implements ColliderMesh {
 
   isInCollision() {
     this.reset()
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) thrillSound.play()
   }
 
   resize = () => {

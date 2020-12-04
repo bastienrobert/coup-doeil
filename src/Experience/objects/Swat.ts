@@ -7,6 +7,9 @@ import { ColliderMesh, OnCollideParams } from '~/Experience/core/CollidableMesh'
 
 import swat from '~/assets/textures/stuffs/swat.png'
 
+import { swat as swatSound } from '~/sounds'
+
+
 export default class Swat extends DynamicPlane implements ColliderMesh {
   _onCollide: OnCollideParams
 
@@ -31,6 +34,10 @@ export default class Swat extends DynamicPlane implements ColliderMesh {
       }, 200)
       if (this._onCollide) this._onCollide(this.name, mesh.name)
     }
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) swatSound.play()
   }
 
   resize = () => {

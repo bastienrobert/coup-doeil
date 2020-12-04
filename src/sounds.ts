@@ -72,3 +72,9 @@ export const bulb = new Howl({
   autoplay: false,
   volume: 0.5,
 });
+
+export const thrill = new Howl({
+  src: ['/sounds/objects/thrill.mp3'],
+  autoplay: false,
+  volume: 0.5,
+});

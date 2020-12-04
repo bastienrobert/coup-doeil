@@ -5,6 +5,8 @@ import { ColliderMesh } from '~/Experience/core/CollidableMesh'
 
 import pan from '~/assets/textures/stuffs/pan.png'
 
+import { pan as panSound } from '~/sounds'
+
 export default class Pan extends DynamicPlane implements ColliderMesh {
   constructor(gl, params: DynamicPlaneParams) {
     super(gl, {
@@ -16,6 +18,10 @@ export default class Pan extends DynamicPlane implements ColliderMesh {
 
   isInCollision() {
     this.reset()
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) panSound.play()
   }
 
   resize = () => {

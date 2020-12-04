@@ -3,6 +3,7 @@ import DynamicPlane, {
 } from '~/Experience/meshes/DynamicPlane'
 
 import bottle from '~/assets/textures/stuffs/bottle.png'
+import { bottle as bottleSound } from '~/sounds'
 
 export default class Bottle extends DynamicPlane {
   constructor(gl, params: DynamicPlaneParams) {
@@ -11,6 +12,10 @@ export default class Bottle extends DynamicPlane {
       transparent: true,
       texture: bottle,
     })
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) bottleSound.play()
   }
 
   resize = () => {

@@ -4,6 +4,7 @@ import DynamicPlane, {
   DynamicPlaneParamsWithColliderCallback,
 } from '~/Experience/meshes/DynamicPlane'
 import { ColliderMesh, OnCollideParams } from '~/Experience/core/CollidableMesh'
+import { bulb as bulbSound } from '~/sounds'
 
 import bulb from '~/assets/textures/stuffs/bulb.png'
 
@@ -21,6 +22,10 @@ export default class Bulb extends DynamicPlane implements ColliderMesh {
     })
 
     this._onCollide = onCollide
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) bulbSound.play()
   }
 
   isInCollision(mesh: Mesh) {

@@ -7,6 +7,8 @@ import { ColliderMesh, OnCollideParams } from '~/Experience/core/CollidableMesh'
 
 import clock from '~/assets/textures/stuffs/clock.png'
 
+import { clock as clockSound } from '~/sounds'
+
 export default class Clock extends DynamicPlane implements ColliderMesh {
   _onCollide: OnCollideParams
 
@@ -31,6 +33,10 @@ export default class Clock extends DynamicPlane implements ColliderMesh {
       }, 200)
       if (this._onCollide) this._onCollide(this.name, mesh.name)
     }
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) clockSound.play()
   }
 
   resize = () => {

@@ -5,6 +5,8 @@ import { ColliderMesh } from '~/Experience/core/CollidableMesh'
 
 import redBall from '~/assets/textures/stuffs/red_ball.png'
 
+import { ball as ballSound } from '~/sounds'
+
 export default class RedBall extends DynamicPlane implements ColliderMesh {
   constructor(gl, params: DynamicPlaneParams) {
     super(gl, {
@@ -12,6 +14,10 @@ export default class RedBall extends DynamicPlane implements ColliderMesh {
       transparent: true,
       texture: redBall,
     })
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) ballSound.play()
   }
 
   isInCollision() {
