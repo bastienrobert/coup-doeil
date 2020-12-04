@@ -112,7 +112,7 @@ export default class Experience extends Transform {
           resolution: this._resolution,
         }),
       ],
-      'iddle',
+      'dog',
     )
     this.addChild(this._scenes)
 

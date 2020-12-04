@@ -23,7 +23,6 @@ export default function Intro() {
   const [toggleClass, setToggleClass] = useState(false)
 
   const onKeyDown = (event) => {
-    console.log(event)
     if (event.code === 'ArrowLeft' && isEnd || event.code === 'ArrowRight' && isEnd) {
       setGrandmaClass(css.disable)
       setDogClass(css.dogMove)

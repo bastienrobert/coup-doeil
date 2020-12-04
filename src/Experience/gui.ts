@@ -71,8 +71,6 @@ export function newGUIScreenTransform(
     )
     tmp_vec_3.z = object.position.z
     object.position.copy(tmp_vec_3)
-    ;(object as any)._initial?.copy(object.position)
-    console.log(tmp_vec_3)
     object.updateMatrixWorld()
 
     // compute object size to fit in viewport

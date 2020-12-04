@@ -36,7 +36,7 @@ export default class Boot extends DynamicPlane implements ColliderMesh {
   resize = () => {
     super.resize()
 
-    this.rotation.set(0, 0, -Math.PI / 2)
+    this.rotation.z = -Math.PI / 2
     this.position.z = 0.3
     this.resetSize()
 

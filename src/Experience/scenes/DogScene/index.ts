@@ -3,6 +3,9 @@ import { Camera, OGLRenderingContext, Transform, Vec2, Vec3 } from 'ogl'
 import Game from '~/Experience/Game'
 import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
 
+import Background from './objects/Background'
+import Floor from './groups/Floor'
+
 import RaycastableMesh from '~/Experience/core/RaycastableMesh'
 
 export default class DogScene extends Transform implements Scene {
@@ -14,6 +17,9 @@ export default class DogScene extends Transform implements Scene {
   _resolution: Vec2
   _mouse: Vec3
   _camera: Camera
+
+  _background: Background
+  _floor: Floor
 
   constructor(gl, { game, resolution, mouse, camera }: SceneParams) {
     super()
@@ -27,12 +33,19 @@ export default class DogScene extends Transform implements Scene {
 
     this.raycastable = []
 
-    // this._background = new Background(gl, { camera, resolution })
-    // this.addChild(this._background)
+    this._background = new Background(gl, { camera, resolution })
+    this.addChild(this._background)
+
+    this._floor = new Floor(gl, {
+      camera,
+      resolution
+    })
+    this.addChild(this._floor)
   }
 
-  onEnter = async () => {
+  onBeforeEnter = async () => {
     this._game.set('dog')
+    return Promise.resolve()
   }
 
   onMouseDown = () => {
@@ -48,10 +61,13 @@ export default class DogScene extends Transform implements Scene {
   }
 
   resize = () => {
-    // this._background.resize()
+    this._background.resize()
+    this._floor.resize()
   }
 
-  update = (t) => {}
+  update = (t) => {
+    this._floor.update()
+  }
 
   _onCollide = (name) => {
     this._game.push(name)

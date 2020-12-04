@@ -64,7 +64,6 @@ export default class Game extends Emitter {
 
   win = (name) => {
     if (this.current.won) return
-    console.log('WIN')
     this.current.won = true
     this.emit('win', name)
   }
