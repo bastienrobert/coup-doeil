@@ -37,7 +37,6 @@ export default class Clock extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.8
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

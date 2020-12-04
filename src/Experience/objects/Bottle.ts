@@ -17,7 +17,6 @@ export default class Bottle extends DynamicPlane {
     super.resize()
 
     this.position.z = 0.2
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

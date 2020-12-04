@@ -22,7 +22,6 @@ export default class Bone extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.28
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

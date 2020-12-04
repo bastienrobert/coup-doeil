@@ -22,7 +22,6 @@ export default class PurpleBall extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.7
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

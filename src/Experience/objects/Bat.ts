@@ -17,7 +17,6 @@ export default class Bat extends DynamicPlane {
 
     this.rotation.set(0, 0, -Math.PI / 2)
     this.position.z = 0.4
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

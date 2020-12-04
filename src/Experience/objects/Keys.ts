@@ -22,7 +22,6 @@ export default class Swat extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.5
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

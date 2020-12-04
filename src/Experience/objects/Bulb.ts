@@ -37,7 +37,6 @@ export default class Bulb extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.4
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

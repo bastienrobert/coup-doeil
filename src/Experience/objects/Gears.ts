@@ -37,7 +37,6 @@ export default class Gears extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.6
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

@@ -213,16 +213,14 @@ export default class DynamicPlane extends RaycastableMesh {
     }
     this.initial.copy(tmp_vec_3)
 
-    if (!this._moved) {
-      this.position.copy(this.initial)
-    }
-  }
-
-  resetSize() {
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)
     if (this._sizeOnScreen) this.scale.multiply(this._sizeOnScreen)
+
+    if (!this._moved) {
+      this.position.copy(this.initial)
+    }
   }
 
   reset() {

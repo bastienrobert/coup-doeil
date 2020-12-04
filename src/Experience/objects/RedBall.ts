@@ -22,7 +22,6 @@ export default class RedBall extends DynamicPlane implements ColliderMesh {
     super.resize()
 
     this.position.z = 0.3
-    this.resetSize()
 
     this.initial.z = this.position.z
   }

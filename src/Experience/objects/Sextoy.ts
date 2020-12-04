@@ -23,7 +23,6 @@ export default class Sextoy extends DynamicPlane implements ColliderMesh {
 
     this.rotation.set(0, 0, Math.PI / 2)
     this.position.z = 0.2
-    this.resetSize()
 
     this.initial.z = this.position.z
   }
