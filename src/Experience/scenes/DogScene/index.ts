@@ -4,7 +4,9 @@ import Game from '~/Experience/Game'
 import { Scene, SceneParams } from '~/Experience/controllers/SceneController'
 
 import Background from './objects/Background'
-import Floor from './groups/Floor'
+import Floor from './objects/Floor'
+import Floating from './groups/Floating'
+import Dog from './groups/Dog'
 
 import RaycastableMesh from '~/Experience/core/RaycastableMesh'
 import Spot from '~/Experience/pass/Spot'
@@ -26,6 +28,8 @@ export default class DogScene extends Transform implements Scene {
 
   _background: Background
   _floor: Floor
+  _dog: Dog
+  _floating: Floating
 
   constructor(gl, { game, resolution, mouse, camera, spot }: DogSceneParams) {
     super()
@@ -45,9 +49,24 @@ export default class DogScene extends Transform implements Scene {
 
     this._floor = new Floor(gl, {
       camera,
-      resolution
+      resolution,
     })
     this.addChild(this._floor)
+
+    this._dog = new Dog(gl, {
+      camera,
+      resolution,
+    })
+    this.addChild(this._dog)
+
+    this._floating = new Floating(gl, {
+      camera,
+      resolution,
+      mouse,
+    })
+    this.addChild(this._floating)
+
+    // this.raycastable.push(...this._floor.raycastables)
   }
 
   onBeforeEnter = async () => {
@@ -80,7 +99,7 @@ export default class DogScene extends Transform implements Scene {
   }
 
   update = (t) => {
-    this._floor.update(t)
+    // this._floor.update(t)
   }
 
   _onCollide = (name) => {

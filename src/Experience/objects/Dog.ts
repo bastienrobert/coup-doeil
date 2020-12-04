@@ -1,8 +1,6 @@
 import { Vec3 } from 'ogl'
 
-import CollidablePlane, {
-  CollidablePlaneParams,
-} from '~/Experience/meshes/CollidablePlane'
+import StaticPlane, { StaticPlaneParams } from '../meshes/StaticPlane'
 import dog from '~/assets/textures/stuffs/dog.png'
 
 import {
@@ -16,8 +14,8 @@ const tmp_vec_3 = new Vec3()
 const POSITION = { bottom: 40, left: 55 }
 const SIZE = 0.4
 
-export default class Dog extends CollidablePlane {
-  constructor(gl, params: CollidablePlaneParams) {
+export default class Dog extends StaticPlane {
+  constructor(gl, params: StaticPlaneParams) {
     super(gl, {
       ...params,
       transparent: true,
