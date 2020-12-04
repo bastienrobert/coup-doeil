@@ -13,7 +13,7 @@ import {
 
 const tmp_vec_3 = new Vec3()
 
-const POSITION = { top: 18, left: 72 }
+const POSITION = { top: 32, left: 75 }
 const SIZE = 0.1
 
 export default class ClockBlack extends CollidablePlane {
@@ -35,7 +35,6 @@ export default class ClockBlack extends CollidablePlane {
     )
     this.position.copy(tmp_vec_3)
     this.position.z = 0.8
-    this.rotation.x = Math.PI / 3
     getWorldMatrix(this, tmp_vec_3)
     getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
     this.scale.set(tmp_vec_3.x)
