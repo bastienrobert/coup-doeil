@@ -30,8 +30,7 @@ class Stage {
   }
 
   check() {
-    // return Object.values(this._values).every((v) => v)
-    return true
+    return Object.values(this._values).every((v) => v)
   }
 }
 
@@ -57,8 +56,7 @@ export default class Game extends Emitter {
   }
 
   reset() {
-    // this.emit('set', 'stuff')
-    this.emit('set', 'dog')
+    this.emit('set', 'stuff')
   }
 
   push(name: string) {

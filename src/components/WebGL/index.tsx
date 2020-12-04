@@ -38,7 +38,7 @@ export default function WebGL({ play, onWin }: WebGLParams) {
         },
         {
           name: 'dog',
-          objects: ['qsdf'],
+          objects: ['boot', 'bulb', 'clock', 'gears', 'swat'],
         },
       ],
       'stuff',

@@ -1,11 +1,7 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
 import StaticPlane from '~/Experience/meshes/StaticPlane'
-import {
-  ColliderGroup,
-  ColliderMesh,
-  OnCollideParams,
-} from '~/Experience/core/CollidableMesh'
+import { ColliderMesh, OnCollideParams } from '~/Experience/core/CollidableMesh'
 
 import floor from '~/assets/textures/stuffs/floor.png'
 
@@ -16,25 +12,13 @@ import ClockBlack from '~/Experience/objects/ClockBlack'
 import SwatBlack from '~/Experience/objects/SwatBlack'
 import GearsBlack from '~/Experience/objects/GearsBlack'
 
-// import {
-//   getScaleFromCameraDistance,
-//   getWorldMatrix,
-//   getWorldPositionFromViewportRectPerc,
-// } from '~/utils/maths'
 import { CollidablePlaneParams } from '~/Experience/meshes/CollidablePlane'
-
-// const tmp_vec_3 = new Vec3()
-
-// const BG_POSITION = { top: 60, right: 50 }
-// const BG_SIZE = 1.0
 
 interface DogParams extends CollidablePlaneParams {
   onCollide?: OnCollideParams
 }
 
-export default class Dog extends Transform implements ColliderGroup {
-  colliders: ColliderMesh[]
-
+export default class Dog extends Transform {
   _background: StaticPlane
   _camera: Camera
   _resolution: Vec2
@@ -51,7 +35,6 @@ export default class Dog extends Transform implements ColliderGroup {
 
     this._camera = camera
     this._resolution = resolution
-    this.colliders = []
 
     this._dog = new DogObject(gl, {
       texture: floor,
@@ -115,25 +98,9 @@ export default class Dog extends Transform implements ColliderGroup {
     })
     this._gearsBlack.name = 'gearsBlack'
     this.addChild(this._gearsBlack)
-
-
   }
 
   resize = () => {
-    // getWorldPositionFromViewportRectPerc(
-    //   this._camera,
-    //   BG_POSITION,
-    //   this._resolution,
-    //   this.position,
-    // )
-    // getWorldMatrix(this, tmp_vec_3)
-    // this.position.copy(tmp_vec_3)
-    // getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
-    // this._background.scale.set(tmp_vec_3.x)
-    // this._background.scale.multiply(BG_SIZE)
-    // this._background.position.z = 0.3
-
-    // this.rotation.x = -Math.PI / 3
     this._dog.resize()
 
     this._bulbBlack.resize()
@@ -144,7 +111,6 @@ export default class Dog extends Transform implements ColliderGroup {
   }
 
   update() {
-    //this._dog.update()
     this._bulbBlack.update()
     this._bootBlack.update()
     this._clockBlack.update()

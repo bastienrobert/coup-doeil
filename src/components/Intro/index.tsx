@@ -76,11 +76,7 @@ export default function Intro({ onPlay }) {
   }, [isEnd])
 
   return (
-    <div
-      ref={componentRef}
-      className={css.Intro}
-      // onClick={onClick}
-      onClick={onStartClick}>
+    <div ref={componentRef} className={css.Intro} onClick={onClick}>
       <h1 className={css.h1}>mamie</h1>
       <img className={dogclass} src={dog} />
       <h2 className={css.h2}>coco</h2>

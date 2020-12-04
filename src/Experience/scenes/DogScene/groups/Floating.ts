@@ -1,7 +1,11 @@
 import { Camera, Transform, Vec2, Vec3 } from 'ogl'
 
 import StaticPlane from '~/Experience/meshes/StaticPlane'
-import { ColliderMesh, OnCollideParams } from '~/Experience/core/CollidableMesh'
+import {
+  ColliderGroup,
+  ColliderMesh,
+  OnCollideParams,
+} from '~/Experience/core/CollidableMesh'
 import { DynamicPlaneParams } from '~/Experience/meshes/DynamicPlane'
 import RaycastableMesh, {
   RaycastableGroup,
@@ -13,27 +17,18 @@ import Clock from '~/Experience/objects/Clock'
 import Swat from '~/Experience/objects/Swat'
 import Gears from '~/Experience/objects/Gears'
 
-// import {
-//   getScaleFromCameraDistance,
-//   getWorldMatrix,
-//   getWorldPositionFromViewportRectPerc,
-// } from '~/utils/maths'
-
-// const tmp_vec_3 = new Vec3()
-
-// const BG_POSITION = { top: 60, right: 50 }
-// const BG_SIZE = 1.0
-
 interface FloatingParams extends DynamicPlaneParams {
   onCollide?: OnCollideParams
 }
 
-export default class Floating extends Transform implements RaycastableGroup {
+export default class Floating
+  extends Transform
+  implements RaycastableGroup, ColliderGroup {
   raycastables: RaycastableMesh[]
+  colliders: ColliderMesh[]
 
   _background: StaticPlane
   _camera: Camera
-  _mouse: Vec3
   _resolution: Vec2
 
   _bulb: Bulb
@@ -47,8 +42,8 @@ export default class Floating extends Transform implements RaycastableGroup {
 
     this._camera = camera
     this._resolution = resolution
-    this._mouse = mouse
     this.raycastables = []
+    this.colliders = []
 
     this._bulb = new Bulb(gl, {
       sizeOnScreen: 0.06,
@@ -88,7 +83,7 @@ export default class Floating extends Transform implements RaycastableGroup {
 
     this._swat = new Swat(gl, {
       sizeOnScreen: 0.3,
-      positionOnScreen: { bottom: 15, left: 21 },
+      positionOnScreen: { top: 15, left: 21 },
       camera,
       mouse,
       onCollide,
@@ -117,32 +112,22 @@ export default class Floating extends Transform implements RaycastableGroup {
       this._clock,
       this._swat,
       this._gears,
-
+    )
+    this.colliders.push(
+      this._clock,
+      this._gears,
+      this._boot,
+      this._swat,
+      this._bulb,
     )
   }
 
   resize = () => {
-    // getWorldPositionFromViewportRectPerc(
-    //   this._camera,
-    //   BG_POSITION,
-    //   this._resolution,
-    //   this.position,
-    // )
-    // getWorldMatrix(this, tmp_vec_3)
-    // this.position.copy(tmp_vec_3)
-    // getScaleFromCameraDistance(this._camera, tmp_vec_3, tmp_vec_3)
-    // this._background.scale.set(tmp_vec_3.x)
-    // this._background.scale.multiply(BG_SIZE)
-    // this._background.position.z = 0.3
-
-    // this.rotation.x = -Math.PI / 3
-    this._bulb.resize()
-    this._boot.resize()
-    this._clock.resize()
     this._swat.resize()
+    this._boot.resize()
     this._gears.resize()
-
-
+    this._bulb.resize()
+    this._clock.resize()
   }
 
   update(t) {

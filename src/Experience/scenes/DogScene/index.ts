@@ -53,27 +53,26 @@ export default class DogScene extends Transform implements Scene {
     })
     this.addChild(this._floor)
 
-    this._dog = new Dog(gl, {
-      camera,
-      resolution,
-    })
-    this.addChild(this._dog)
-
     this._floating = new Floating(gl, {
       camera,
       resolution,
+      onCollide: this._onCollide,
       mouse,
     })
     this.addChild(this._floating)
 
-    // this.raycastable.push(...this._floor.raycastables)
+    this._dog = new Dog(gl, {
+      camera,
+      resolution,
+      colliders: [...this._floating.colliders],
+    })
+    this.addChild(this._dog)
+
+    this.raycastable.push(...this._floating.raycastables)
   }
 
   onBeforeEnter = async () => {
     this._game.set('dog')
-    setTimeout(() => {
-      this._game.push('qsdf')
-    }, 1000)
     return
   }
 
@@ -101,7 +100,8 @@ export default class DogScene extends Transform implements Scene {
   }
 
   update = (t) => {
-    //this._floor.update(t)
+    this._floating.update(t)
+    this._dog.update()
   }
 
   _onCollide = (name) => {
