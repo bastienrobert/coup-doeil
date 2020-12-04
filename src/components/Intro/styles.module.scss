@@ -42,11 +42,11 @@
   margin-left:25Vmin;
   margin-top:-15Vmin;
   transition: transform 600ms ease-in-out;
-  transform: scale(4) translateY(50%) translateX(-50%);
+  transform: scale(3.5) translateY(50%) translateX(-55%);
 }
 
 .disable{
-  visibility:hidden;
+  display:none;
 }
 
 .arrowR{
@@ -70,6 +70,16 @@
   padding-top:1.8rem;
 }
 
+.bg_spoutnik{
+  padding-top:17.5rem;
+  width:18em;
+}
+
+@media only screen and (max-device-width : 1440px) and (min-height: 900px){
+  .spoutnik{
+    padding-top:20rem;
+  }
+}
 
 @media only screen and (max-device-width : 900px){
   .h1{

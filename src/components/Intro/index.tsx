@@ -5,6 +5,7 @@ import grandma from '~/assets/img/grandma.png'
 import arrowL from '~/assets/img/arrowLeft.svg'
 import arrowR from '~/assets/img/arrowRight.svg'
 import dog from '~/assets/img/dog_intro.png'
+import bg_button from '~/assets/img/button_intro.svg'
 
 import { intro } from '~/sounds'
 
@@ -19,7 +20,16 @@ export default function Intro() {
   const [grandmaclass, setGrandmaClass] = useState(css.grandma);
   const [arrowLclass, setarrowLclass] = useState(css.disable);
   const [arrowRclass, setarrowRclass] = useState(css.disable);
-  const [spoutnikclass, setspoutnikclass] = useState(css.disable);
+  const [toggleClass, setToggleClass] = useState(false)
+
+  const onKeyDown = (event) => {
+    console.log(event)
+    if (event.code === 'ArrowLeft' && isEnd || event.code === 'ArrowRight' && isEnd) {
+      setGrandmaClass(css.disable)
+      setDogClass(css.dogMove)
+      setToggleClass(true)
+    }
+  }
 
   const onEnd = useCallback(() => {
     setIsEnd(true)
@@ -31,8 +41,7 @@ export default function Intro() {
       intro.play()
       intro.on('end', onEnd)
       setPclass(css.disable)
-      // setGrandmaClass(css.disable)
-      // setDogClass(css.dogMove)
+
     }
 
     return () => {
@@ -46,7 +55,10 @@ export default function Intro() {
       setarrowRclass(css.arrowR)
       setarrowLclass(css.arrowL)
     }
+    window.addEventListener('keydown', onKeyDown)
+    return () => { window.removeEventListener('keydown', onKeyDown) }
   }, [isEnd])
+
 
   return (
     <div className={css.Intro} onClick={onClick}>
@@ -57,7 +69,7 @@ export default function Intro() {
       <p className={pclass} >Clique pour commencer</p>
       <img className={arrowLclass} src={arrowL} />
       <img className={arrowRclass} src={arrowR} />
-      <p className={spoutnikclass} >Remonter Spoutnik</p>
+      <img className={toggleClass ? css.bg_spoutnik : css.disable} src={bg_button} />
     </div>
   )
 }
