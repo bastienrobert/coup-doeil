@@ -37,10 +37,10 @@ export default class Floating extends Transform implements RaycastableGroup {
   _resolution: Vec2
 
   _bulb: Bulb
-  _clock: Clock
-  _gears: Gears
-  _swat: Swat
   _boot: Boot
+  _clock: Clock
+  _swat: Swat
+  _gears: Gears
 
   constructor(gl, { camera, resolution, mouse, onCollide }: FloatingParams) {
     super()
@@ -50,29 +50,17 @@ export default class Floating extends Transform implements RaycastableGroup {
     this._mouse = mouse
     this.raycastables = []
 
-    this._clock = new Clock(gl, {
-      sizeOnScreen: 0.08,
-      positionOnScreen: { bottom: 30, left: 15 },
+    this._bulb = new Bulb(gl, {
+      sizeOnScreen: 0.06,
+      positionOnScreen: { top: 55, left: 10 },
       camera,
       mouse,
       onCollide,
       resolution,
       transparent: true,
     })
-    this._clock.name = 'clock'
-    this.addChild(this._clock)
-
-    this._gears = new Gears(gl, {
-      sizeOnScreen: 0.08,
-      positionOnScreen: { bottom: 40, left: 25 },
-      camera,
-      mouse,
-      onCollide,
-      resolution,
-      transparent: true,
-    })
-    this._gears.name = 'gears'
-    this.addChild(this._gears)
+    this._bulb.name = 'bulb'
+    this.addChild(this._bulb)
 
     this._boot = new Boot(gl, {
       camera,
@@ -85,6 +73,18 @@ export default class Floating extends Transform implements RaycastableGroup {
     })
     this._boot.name = 'boot'
     this.addChild(this._boot)
+
+    this._clock = new Clock(gl, {
+      sizeOnScreen: 0.08,
+      positionOnScreen: { bottom: 30, left: 15 },
+      camera,
+      mouse,
+      onCollide,
+      resolution,
+      transparent: true,
+    })
+    this._clock.name = 'clock'
+    this.addChild(this._clock)
 
     this._swat = new Swat(gl, {
       sizeOnScreen: 0.3,
@@ -99,24 +99,25 @@ export default class Floating extends Transform implements RaycastableGroup {
     this._swat.name = 'swat'
     this.addChild(this._swat)
 
-    this._bulb = new Bulb(gl, {
-      sizeOnScreen: 0.06,
-      positionOnScreen: { top: 55, left: 10 },
+    this._gears = new Gears(gl, {
+      sizeOnScreen: 0.08,
+      positionOnScreen: { bottom: 40, left: 25 },
       camera,
       mouse,
       onCollide,
       resolution,
       transparent: true,
     })
-    this._bulb.name = 'bulb'
-    this.addChild(this._bulb)
+    this._gears.name = 'gears'
+    this.addChild(this._gears)
 
     this.raycastables.push(
-      this._clock,
-      this._gears,
-      this._boot,
-      this._swat,
       this._bulb,
+      this._boot,
+      this._clock,
+      this._swat,
+      this._gears,
+
     )
   }
 
@@ -135,19 +136,20 @@ export default class Floating extends Transform implements RaycastableGroup {
     // this._background.position.z = 0.3
 
     // this.rotation.x = -Math.PI / 3
-
-    this._swat.resize()
-    this._boot.resize()
-    this._gears.resize()
     this._bulb.resize()
+    this._boot.resize()
     this._clock.resize()
+    this._swat.resize()
+    this._gears.resize()
+
+
   }
 
   update(t) {
-    this._swat.update(t)
-    this._boot.update(t)
-    this._gears.update(t)
     this._bulb.update(t)
+    this._boot.update(t)
     this._clock.update(t)
+    this._swat.update(t)
+    this._gears.update(t)
   }
 }
