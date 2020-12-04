@@ -66,16 +66,16 @@ export default class SceneController extends Transform {
 
     // HIDE PREVIOUS SCENE
     if (previous) {
-      if (previous.onBeforeLeave) await previous.onBeforeLeave()
+      if (previous.onBeforeLeave) previous.onBeforeLeave()
       this.raycastable = []
       previous.visible = false
-      if (previous.onLeave) await previous.onLeave()
       if (next?.resize) next.resize()
+      if (previous.onLeave) await previous.onLeave()
     }
 
     // HIDE NEXT SCENE
     if (next) {
-      if (next.onBeforeEnter) await next.onBeforeEnter()
+      if (next.onBeforeEnter) next.onBeforeEnter()
       next.visible = true
       if (next.raycastable) this.raycastable = next.raycastable
       if (next.onEnter) await next.onEnter()
