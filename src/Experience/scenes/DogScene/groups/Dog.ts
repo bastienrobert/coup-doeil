@@ -25,10 +25,10 @@ export default class Dog extends Transform {
 
   _dog: DogObject
   _bulbBlack: BulbBlack
-  _clockBlack: ClockBlack
-  _gearsBlack: GearsBlack
-  _swatBlack: SwatBlack
   _bootBlack: BootBlack
+  _clockBlack: ClockBlack
+  _swatBlack: SwatBlack
+  _gearsBlack: GearsBlack
 
   constructor(gl, { camera, resolution, colliders, onCollide }: DogParams) {
     super()
@@ -45,27 +45,15 @@ export default class Dog extends Transform {
     this._dog.name = 'dog'
     this.addChild(this._dog)
 
-    this._clockBlack = new ClockBlack(gl, {
-      texture: floor,
+    this._bulbBlack = new BulbBlack(gl, {
       camera,
       colliders,
       onCollide,
       resolution,
       transparent: true,
     })
-    this._clockBlack.name = 'clockBlack'
-    this.addChild(this._clockBlack)
-
-    this._gearsBlack = new GearsBlack(gl, {
-      texture: floor,
-      camera,
-      colliders,
-      onCollide,
-      resolution,
-      transparent: true,
-    })
-    this._gearsBlack.name = 'gearsBlack'
-    this.addChild(this._gearsBlack)
+    this._bulbBlack.name = 'bulbBlack'
+    this.addChild(this._bulbBlack)
 
     this._bootBlack = new BootBlack(gl, {
       texture: floor,
@@ -78,6 +66,17 @@ export default class Dog extends Transform {
     this._bootBlack.name = 'bootBlack'
     this.addChild(this._bootBlack)
 
+    this._clockBlack = new ClockBlack(gl, {
+      texture: floor,
+      camera,
+      colliders,
+      onCollide,
+      resolution,
+      transparent: true,
+    })
+    this._clockBlack.name = 'clockBlack'
+    this.addChild(this._clockBlack)
+
     this._swatBlack = new SwatBlack(gl, {
       texture: floor,
       camera,
@@ -89,31 +88,33 @@ export default class Dog extends Transform {
     this._swatBlack.name = 'swatBlack'
     this.addChild(this._swatBlack)
 
-    this._bulbBlack = new BulbBlack(gl, {
+    this._gearsBlack = new GearsBlack(gl, {
+      texture: floor,
       camera,
       colliders,
       onCollide,
       resolution,
       transparent: true,
     })
-    this._bulbBlack.name = 'bulbBlack'
-    this.addChild(this._bulbBlack)
+    this._gearsBlack.name = 'gearsBlack'
+    this.addChild(this._gearsBlack)
   }
 
   resize = () => {
     this._dog.resize()
-    this._swatBlack.resize()
-    this._bootBlack.resize()
-    this._gearsBlack.resize()
+
     this._bulbBlack.resize()
+    this._bootBlack.resize()
     this._clockBlack.resize()
+    this._gearsBlack.resize()
+    this._swatBlack.resize()
   }
 
   update() {
-    this._swatBlack.update()
-    this._bootBlack.update()
-    this._gearsBlack.update()
     this._bulbBlack.update()
+    this._bootBlack.update()
     this._clockBlack.update()
+    this._swatBlack.update()
+    this._gearsBlack.update()
   }
 }
