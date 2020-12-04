@@ -8,6 +8,7 @@ import {
 } from '~/utils/maths'
 
 const gui = new dat.GUI()
+gui.hide()
 
 export function newGUITransform(name: string, object: Transform, parent = gui) {
   const c = parent.addFolder(name)
