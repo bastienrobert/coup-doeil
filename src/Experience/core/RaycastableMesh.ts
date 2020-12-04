@@ -7,4 +7,5 @@ export interface RaycastableGroup {
 export default class RaycastableMesh extends Mesh {
   isHit = false
   isDown = new Vec3()
+  onMouseDown?: () => void
 }

@@ -4,6 +4,7 @@ import DynamicPlane, {
 import { ColliderMesh } from '~/Experience/core/CollidableMesh'
 
 import bolt from '~/assets/textures/stuffs/bolt.png'
+import { bolt as boldSound } from '~/sounds'
 
 export default class Bolt extends DynamicPlane implements ColliderMesh {
   constructor(gl, params: DynamicPlaneParams) {
@@ -16,6 +17,10 @@ export default class Bolt extends DynamicPlane implements ColliderMesh {
 
   isInCollision() {
     this.reset()
+  }
+
+  onMouseDown = () => {
+    if (this.isHit) boldSound.play()
   }
 
   resize = () => {

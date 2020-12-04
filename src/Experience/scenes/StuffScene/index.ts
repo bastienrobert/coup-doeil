@@ -130,7 +130,10 @@ export default class StuffScene extends Transform implements Scene {
 
   onMouseDown = () => {
     this.raycastable.forEach((m) => {
-      if (m.isHit) m.isDown.copy(this._mouse)
+      if (m.isHit) {
+        m.isDown.copy(this._mouse)
+        if (m.onMouseDown) m.onMouseDown()
+      }
     })
   }
 

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@bastienrobert/events": "^1.0.4",
+    "@types/howler": "^2.2.1",
     "animejs": "^3.2.1",
     "classnames": "^2.2.6",
     "dat.gui": "^0.7.7",
